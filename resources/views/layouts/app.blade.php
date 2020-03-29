@@ -51,24 +51,23 @@
                         </li>
                         @endif
                         @else
+
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('location') }}">{{ __('Location') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('tour') }}">{{ __('Tour') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('type') }}">{{ __('Type') }}</a>
+                        </li>
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 {{ Auth::user()->name }} <span class="caret"></span>
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-
-                                <a class="dropdown-item" href="{{ route('location') }}">
-                                    {{ __('Location') }}
-                                </a>
-
-                                <a class="dropdown-item" href="{{ route('tour') }}">
-                                    {{ __('Tour') }}
-                                </a>
-
-                                <a class="dropdown-item" href="{{ route('type') }}">
-                                    {{ __('Type') }}
-                                </a>
 
                                 <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

@@ -80,14 +80,16 @@
             @endif
 
             <div class="content">
-                <div class="title m-b-md">
+                <div id="index" class="title m-b-md"></div>
+                <!-- <div class="title m-b-md">
                     Humanoid
                 </div>
 
                 <div class="links">
                     Welcome to the Humanoid Tour Management System
-                </div>
+                </div> -->
             </div>
         </div>
+        <script type="text/javascript" src="js/app.js"></script>
     </body>
 </html>
