@@ -65,7 +65,11 @@
                             <label for="position" class="col-md-4 col-form-label text-md-right">{{ __('Position') }}</label>
 
                             <div class="col-md-6">
-                                <input id="position" type="text" class="form-control" name="position" required autocomplete="position">
+                                <select id="position" class="form-control" name="position" required>
+                                    <option value="">Choose Position</option>
+                                    <option value="assistant">Assistant</option>
+                                    <option value="admin">Admin</option>
+                                </select>
                             </div>
                         </div>
 

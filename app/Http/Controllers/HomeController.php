@@ -25,4 +25,19 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    public function location()
+    {
+        return view('location');
+    }
+
+    public function tour()
+    {
+        return view('tour');
+    }
+
+    public function type()
+    {
+        return view('type');
+    }
 }
