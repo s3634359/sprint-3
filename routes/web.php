@@ -19,6 +19,10 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/location', 'HomeController@location')->name('location');
 Route::get('/tour', 'HomeController@tour')->name('tour');
 Route::get('/type', 'HomeController@type')->name('type');
+
+Route::get('/location', 'LocationController@getLocations')->name('location');
+Route::post('/locationSubmit', 'LocationController@locationSubmit');
+Route::post('/locationEdit', 'LocationController@locationEdit');
+Route::post('/locationRemove', 'LocationController@locationRemove');
