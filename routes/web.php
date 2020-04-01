@@ -22,7 +22,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/tour', 'HomeController@tour')->name('tour');
 Route::get('/type', 'HomeController@type')->name('type');
 
-Route::get('/location', 'LocationController@getLocations')->name('location');
-Route::post('/locationSubmit', 'LocationController@locationSubmit');
-Route::post('/locationEdit', 'LocationController@locationEdit');
-Route::post('/locationRemove', 'LocationController@locationRemove');
+Route::get('/location', 'LocationController@getLocations')->name('location')->middleware('auth');
+Route::post('/locationSubmit', 'LocationController@locationSubmit')->middleware('auth');
+Route::post('/locationEdit', 'LocationController@locationEdit')->middleware('auth');
+Route::post('/locationRemove', 'LocationController@locationRemove')->middleware('auth');
