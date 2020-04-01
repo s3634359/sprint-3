@@ -58,9 +58,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('location') }}">{{ __('Location') }}</a>
                         </li>
+                        
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('tour') }}">{{ __('Tour') }}</a>
                         </li>
+
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('type') }}">{{ __('Type') }}</a>
                         </li>

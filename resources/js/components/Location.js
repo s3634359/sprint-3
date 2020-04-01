@@ -48,6 +48,12 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         backgroundColor: theme.palette.background.paper,
     },
+    listItem: {
+        width: '22%',
+    },
+    listItemHead: {
+        width: '28%',
+    },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -122,6 +128,7 @@ function Location(props) {
         //List update
         var backup = locations;
         backup.push({
+            id: locations[locations.length - 1].id + 1,
             name: name,
             x_axis: x_axis,
             y_axis: y_axis,
@@ -130,6 +137,44 @@ function Location(props) {
         });
         setLocations(backup);
 
+    };
+
+    const copy = (event) => {
+        // copy
+        event.preventDefault();
+        setx_axis(parseFloat(x_axis).toFixed(2));
+        sety_axis(parseFloat(y_axis).toFixed(2));
+
+        var copied = name
+        copied += "-copy";
+
+        axios.post('/locationSubmit', {
+            name: copied,
+            x_axis: x_axis,
+            y_axis: y_axis,
+            description: description,
+            min_time: minTime,
+        })
+            .then(function (response) {
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+        cancel();
+
+        //List update
+        var backup = locations;
+        backup.push({
+            id: locations[locations.length - 1].id + 1,
+            name: copied,
+            x_axis: x_axis,
+            y_axis: y_axis,
+            description: description,
+            min_time: minTime,
+        });
+        setLocations(backup);
     };
 
     const edit = () => {
@@ -225,15 +270,15 @@ function Location(props) {
 
 
 
-    const list = [<ListItem button><ListItemText align="center" primary={"Location Name"} /><ListItemText align="center" primary={"X"} /><ListItemText align="center" primary={"Y"} /><ListItemText align="center" primary={"T"} /></ListItem>];
+    const list = [<ListItem button><ListItemText className={classes.listItemHead} align="center" primary={"Location Name"} /><ListItemText className={classes.listItem} align="center" primary={"X"} /><ListItemText className={classes.listItem} align="center" primary={"Y"} /><ListItemText className={classes.listItem} align="center" primary={"T"} /></ListItem>];
     for (const location of locations) {
-        list.push(<ListItem button selected={selectedIndex === location.id} onClick={(event) => handleListItemClick(event, location.id)}><ListItemIcon><LocationOn /></ListItemIcon><ListItemText align="center" primary={location.name} /><ListItemText align="center" primary={location.x_axis} /><ListItemText align="center" primary={location.y_axis} /><ListItemText align="center" primary={location.min_time} /></ListItem>);
+        list.push(<ListItem button selected={selectedIndex === location.id} onClick={(event) => handleListItemClick(event, location.id)}><ListItemIcon><LocationOn /></ListItemIcon><ListItemText className={classes.listItem} align="center" primary={location.name} /><ListItemText className={classes.listItem} align="center" primary={location.x_axis} /><ListItemText className={classes.listItem} align="center" primary={location.y_axis} /><ListItemText className={classes.listItem} align="center" primary={location.min_time} /></ListItem>);
     }
 
     return (
         <Container component="main" maxWidth="md">
             <div className={classes.paper}>
-                <Typography component="h1" variant="h5">
+                <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
                     Location
                 </Typography>
                 <form className={classes.form} noValidate>
@@ -312,6 +357,9 @@ function Location(props) {
                     </Button>
                     <Button className={classes.submit} variant="outlined" color="primary" onClick={edit} disabled={editBtn}>
                         Edit
+                    </Button>
+                    <Button className={classes.submit} variant="outlined" color="primary" onClick={copy} disabled={editBtn}>
+                        Copy
                     </Button>
                     <Button className={classes.submit} variant="outlined" color="secondary" onClick={handleClickOpen} disabled={removeBtn}>
                         Remove

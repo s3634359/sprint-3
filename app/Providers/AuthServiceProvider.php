@@ -25,6 +25,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        // Only Admin can deal with tour
+        Gate::define('tour', function ($user) {
+            return $user->position == 'admin';
+        });
+    
         //
     }
 }

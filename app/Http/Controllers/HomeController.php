@@ -32,7 +32,7 @@ class HomeController extends Controller
     }
 
     public function tour()
-    {
+    {   
         return view('tour');
     }
 
