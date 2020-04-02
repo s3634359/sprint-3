@@ -21,6 +21,8 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 
 <body>
@@ -54,6 +56,9 @@
                         @endif
                         @else
 
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('home') }}">{{ __('Account') }}</a>
+                        </li>
 
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('location') }}">{{ __('Location') }}</a>

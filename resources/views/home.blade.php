@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div id="home" class="title m-b-md"></div>
+<div id="home" data='{{ $data }}' class="title m-b-md"></div>
 <!-- <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">

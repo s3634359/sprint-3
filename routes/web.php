@@ -20,10 +20,12 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/type', 'HomeController@type')->name('type');
+Route::post('/accountDelete', 'HomeController@accountDelete');
 
 Route::get('/location', 'LocationController@getLocations')->name('location');
 Route::post('/locationSubmit', 'LocationController@locationSubmit');
 Route::post('/locationEdit', 'LocationController@locationEdit');
 Route::post('/locationRemove', 'LocationController@locationRemove');
 
-Route::get('/tour', 'HomeController@tour')->name('tour')->middleware('can:tour');
+Route::get('/tour', 'TourController@getTours')->name('tour');
+Route::post('/tourSubmit', 'TourController@tourSubmit')->middleware('can:tour');
