@@ -97,6 +97,10 @@
         <main class="py-4">
             @yield('content')
         </main>
+
+        <footer>
+        Copyright c Humanoid 2020.
+        </footer>
     </div>
 </body>
 
