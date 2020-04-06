@@ -21,9 +21,9 @@ function Type(props) {
 
     const list = [];
     for (const type of types) {
-        list.push({ id: type.id, name: type.type });
+        list.push({ id: type.id, name: type.name });
+        console.log(type.name);
     }
-
 
     const [state, setState] = React.useState({
         columns: [
@@ -70,6 +70,31 @@ function Type(props) {
                                             data.splice(data.indexOf(oldData), 1);
                                             return { ...prevState, data };
                                         });
+                                    }, 600);
+                                }),
+                            onRowUpdate: (newData, oldData) =>
+                                new Promise((resolve) => {
+                                    setTimeout(() => {
+                                        resolve();
+
+                                        axios.post('/typeEdit', {
+                                            id: oldData.id,
+                                            name: newData.name,
+                                        })
+                                            .then(function (response) {
+                                                console.log(response.data);
+                                            })
+                                            .catch(function (error) {
+                                                console.log(error);
+                                            });
+
+                                        if (oldData) {
+                                            setState((prevState) => {
+                                                const data = [...prevState.data];
+                                                data[data.indexOf(oldData)] = newData;
+                                                return { ...prevState, data };
+                                            });
+                                        }
                                     }, 600);
                                 }),
                             onRowAdd: (newData) =>

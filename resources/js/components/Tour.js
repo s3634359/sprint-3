@@ -23,7 +23,8 @@ import {
     ListItemText,
     ListItemIcon,
     IconButton,
-    ListItemSecondaryAction
+    ListItemSecondaryAction,
+    Checkbox
 } from "@material-ui/core";
 
 
@@ -108,8 +109,7 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     typeButton: {
-        width: '20%',
-        height: '30%',
+        height: '40%',
         margin: theme.spacing(0.3),
         background: 'white',
     },
@@ -145,18 +145,21 @@ const getListStyle = isDraggingOver => ({
     //background: isDraggingOver ? 'lightblue' : 'lightgrey',
 });
 
-
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-function Tour() {
+function Tour(props) {
+    const [tours, setTours] = React.useState(JSON.parse(props.data));
+    const [types, setTypes] = React.useState(JSON.parse(props.type));
+    const [locations, setLocations] = React.useState(JSON.parse(props.location));
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const [items, setItems] = React.useState(getItems(10));
 
+    //const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+    console.log(locations);
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -214,8 +217,8 @@ function Tour() {
                 <Container className={classes.cardGrid} maxWidth="md">
                     {/* End hero unit */}
                     <Grid container spacing={4}>
-                        {cards.map((card) => (
-                            <Grid item key={card} xs={12} sm={6} md={4}>
+                        {tours.map((tour) => (
+                            <Grid item key={tour.id} xs={12} sm={6} md={4}>
                                 <Card className={classes.card}>
                                     <CardMedia
                                         className={classes.cardMedia}
@@ -224,29 +227,9 @@ function Tour() {
                                     />
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">
-                                            Tour
+                                            {tour.name} ({tour.min_time} min.)
                                         </Typography>
-                                        <Button variant="contained" className={classes.typeButton} disabled>
-                                            Type
-                                        </Button>
-                                        <Button variant="contained" className={classes.typeButton}>
-                                            Type
-                                        </Button>
-                                        <Button variant="contained" className={classes.typeButton}>
-                                            Type
-                                        </Button>
-                                        <Button variant="contained" className={classes.typeButton}>
-                                            Type
-                                        </Button>
-                                        <Button variant="contained" className={classes.typeButton}>
-                                            Type
-                                        </Button>
-                                        <Button variant="contained" className={classes.typeButton}>
-                                            Type
-                                        </Button>
-                                        <Button variant="contained" className={classes.typeButton}>
-                                            Type
-                                        </Button>
+                                        {types.map((type) => type.tour_id = tour.id ? (<Button variant="contained" className={classes.typeButton}>{type.name}</Button>): NULL)}
                                     </CardContent>
                                     <CardActions>
                                         <Button size="small" color="primary" onClick={handleClickOpen} >
@@ -321,6 +304,23 @@ function Tour() {
                                         </Draggable>
                                     ))}
                                     {provided.placeholder}
+                                    Types
+                                    <ListItem dense button>
+                                        <ListItemIcon>
+                                            <Checkbox
+                                                edge="start"
+                                            />
+                                        </ListItemIcon>
+                                        <ListItemText primary={`Type item`} />
+                                    </ListItem>
+                                    <ListItem dense button>
+                                        <ListItemIcon>
+                                            <Checkbox
+                                                edge="start"
+                                            />
+                                        </ListItemIcon>
+                                        <ListItemText primary={`Type item`} />
+                                    </ListItem>
                                 </List>
                             </RootRef>
                         )}
@@ -334,5 +334,8 @@ function Tour() {
 export default Tour;
 
 if (document.getElementById('tour')) {
-    ReactDOM.render(<Tour />, document.getElementById('tour'));
+    var data = document.getElementById('tour').getAttribute('data');
+    var type = document.getElementById('tour').getAttribute('type');
+    var location = document.getElementById('tour').getAttribute('location');
+    ReactDOM.render(<Tour data={data} type={type} location={location} />, document.getElementById('tour'));
 }

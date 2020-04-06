@@ -98,8 +98,8 @@
             @yield('content')
         </main>
 
-        <footer>
-        Copyright c Humanoid 2020.
+        <footer style="text-align: center;">
+        Copyright © KingKong and Friends <?php echo date("Y"); ?>.
         </footer>
     </div>
 </body>

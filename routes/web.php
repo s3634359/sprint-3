@@ -19,7 +19,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/type', 'HomeController@type')->name('type');
 Route::post('/accountDelete', 'HomeController@accountDelete');
 
 Route::get('/location', 'LocationController@getLocations')->name('location');

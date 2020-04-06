@@ -16,6 +16,7 @@ class CreateToursLocationsTable extends Migration
         Schema::create('tours_locations', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('tour_id')->unsigned()->nullable();
+            $table->integer('order');
             $table->integer('location_id')->unsigned()->nullable();
             $table->foreign('tour_id')->references('id')->on('tours')->onDelete('cascade');
             $table->foreign('location_id')->references('id')->on('locations')->onDelete('cascade');
