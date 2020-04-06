@@ -33,6 +33,7 @@ import RootRef from "@material-ui/core/RootRef";
 import LocationOn from "@material-ui/icons/LocationOn";
 import DeleteOutline from "@material-ui/icons/Delete";
 import SearchIcon from '@material-ui/icons/Search';
+import Tour_Item from './Tour_Item';
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -158,10 +159,9 @@ function Tour(props) {
     const [items, setItems] = React.useState(getItems(10));
 
     //const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-    console.log(locations);
-    const handleClickOpen = () => {
+    const handleClickOpen = (id) => {
         setOpen(true);
+        window.location.href = "/tour_item?id=" + id;
     };
 
     const handleClose = () => {
@@ -229,10 +229,10 @@ function Tour(props) {
                                         <Typography gutterBottom variant="h5" component="h2">
                                             {tour.name} ({tour.min_time} min.)
                                         </Typography>
-                                        {types.map((type) => type.tour_id = tour.id ? (<Button variant="contained" className={classes.typeButton}>{type.name}</Button>): NULL)}
+                                        {types.map((type) => type.tour_id = tour.id ? (<Button variant="contained" className={classes.typeButton}>{type.name}</Button>) : NULL)}
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" color="primary" onClick={handleClickOpen} >
+                                        <Button size="small" color="primary" onClick={() => window.location.href = "/tour_item?id=" + tour.id} >
                                             View
                                         </Button>
                                     </CardActions>
@@ -242,7 +242,7 @@ function Tour(props) {
                     </Grid>
                 </Container>
             </main>
-            <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+            {/* <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
                 <AppBar className={classes.appBar}>
                     <Toolbar>
                         <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
@@ -326,7 +326,7 @@ function Tour(props) {
                         )}
                     </Droppable>
                 </DragDropContext>
-            </Dialog>
+            </Dialog> */}
         </React.Fragment>
     );
 }
