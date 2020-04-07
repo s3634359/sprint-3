@@ -374,7 +374,7 @@ function Location(props) {
                         aria-labelledby="alert-dialog-slide-title"
                         aria-describedby="alert-dialog-slide-description"
                     >
-                        <DialogTitle id="alert-dialog-slide-title">{"Are you sure to delete the lcation?"}</DialogTitle>
+                        <DialogTitle id="alert-dialog-slide-title">{"Are you sure to delete the location?"}</DialogTitle>
                         <DialogActions>
                             <Button onClick={handleClose} color="secondary">
                                 Cancel

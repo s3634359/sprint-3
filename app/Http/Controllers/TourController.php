@@ -33,7 +33,7 @@ class TourController extends Controller
     {
         $location_list = DB::select('select id, name, min_time from locations');
         $type_list = DB::select('select * from types');
-        $type = DB::select('select tours_types.type_id as id, name from types, tours_types where tours_types.tour_id = '. $request->id .' and types.id = tours_types.type_id');
+        $type = DB::select('select type_id as id, name from types, tours_types where types.id = tours_types.type_id and tours_types.tour_id = ?', [$request['id']]);
         $location = DB::select('select tours_locations.location_id as id, name, min_time, tours_locations.order from locations, tours_locations where tours_locations.tour_id = '. $request->id .' and locations.id = tours_locations.location_id order by tours_locations.order ASC');
         return view('tour_item')->with('type', json_encode($type))->with('location', json_encode($location))->with('location_list', json_encode($location_list))->with('type_list', json_encode($type_list));
     }
@@ -44,10 +44,19 @@ class TourController extends Controller
         return response()->json([$request->all()]);
     }
 
+    public function tourTimeUpdate(Request $request)
+    {
+        
+        DB::table('tours')
+            ->where('id', $request['id'])
+            ->update(['min_time' => $request['min_time']]);
+        
+        return response()->json([$request->all()]);
+    }
+
     public function tourSubmitLocation(Request $request)
     {
         $data = DB::select('select * from tours_locations where tour_id = ? and location_id = ?', [$request['id'], $request['location_id']]);
-        //$data = DB::select('select * from tours');
         if ($data != null) {
             DB::table('tours_locations')
                 ->where('tour_id', $request['id'])
@@ -63,6 +72,13 @@ class TourController extends Controller
     {
         DB::delete('delete from tours_locations where tour_id = ? and location_id = ?', [$request['id'], $request['location_id']]);
         return response()->json([$request->all()]);
+    }
+
+    public function getTourType(Request $request)
+    {
+        $type_list = DB::select('select * from types');
+        $type = DB::select('select type_id as id, name from types, tours_types where types.id = tours_types.type_id and tours_types.tour_id = ?', [$request['id']]);
+        return view('tour_type')->with('type', json_encode($type))->with('type_list', json_encode($type_list));
     }
 
 

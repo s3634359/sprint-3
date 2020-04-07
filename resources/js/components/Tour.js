@@ -129,7 +129,6 @@ const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
-
     return result;
 };
 
@@ -227,13 +226,16 @@ function Tour(props) {
                                     />
                                     <CardContent className={classes.cardContent}>
                                         <Typography gutterBottom variant="h5" component="h2">
-                                            {tour.name} ({tour.min_time} min.)
+                                            {tour.name} ({tour.min_time} sec.)
                                         </Typography>
                                         {types.map((type) => type.tour_id = tour.id ? (<Button variant="contained" className={classes.typeButton}>{type.name}</Button>) : NULL)}
                                     </CardContent>
                                     <CardActions>
                                         <Button size="small" color="primary" onClick={() => window.location.href = "/tour_item?id=" + tour.id} >
                                             View
+                                        </Button>
+                                        <Button size="small" color="primary" onClick={() => window.location.href = "/tour_type?id=" + tour.id} >
+                                            Type
                                         </Button>
                                     </CardActions>
                                 </Card>
@@ -242,91 +244,6 @@ function Tour(props) {
                     </Grid>
                 </Container>
             </main>
-            {/* <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-                <AppBar className={classes.appBar}>
-                    <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-                            <CloseIcon />
-                        </IconButton>
-                        <Typography variant="h6" className={classes.title}>
-                            Locations
-                        </Typography>
-                        <div className={classes.search}>
-                            <div className={classes.searchIcon}>
-                                <SearchIcon />
-                            </div>
-                            <InputBase
-                                placeholder="Search…"
-                                classes={{
-                                    root: classes.inputRoot,
-                                    input: classes.inputInput,
-                                }}
-                                inputProps={{ 'aria-label': 'search' }}
-                            />
-                        </div>
-                        <Button autoFocus color="inherit" onClick={handleClose}>
-                            save
-                        </Button>
-                    </Toolbar>
-                </AppBar>
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="droppable">
-                        {(provided, snapshot) => (
-                            <RootRef rootRef={provided.innerRef}>
-                                <List style={getListStyle(snapshot.isDraggingOver)}>
-                                    {items.map((item, index) => (
-                                        <Draggable key={item.id} draggableId={item.id} index={index}>
-                                            {(provided, snapshot) => (
-                                                <ListItem
-                                                    ContainerComponent="li"
-                                                    ContainerProps={{ ref: provided.innerRef }}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                    style={getItemStyle(
-                                                        snapshot.isDragging,
-                                                        provided.draggableProps.style
-                                                    )}
-                                                >
-                                                    <ListItemIcon>
-                                                        <LocationOn />
-                                                    </ListItemIcon>
-                                                    <ListItemText
-                                                        primary={item.primary}
-                                                        secondary={item.secondary}
-                                                    />
-                                                    <ListItemSecondaryAction>
-                                                        <IconButton>
-                                                            <DeleteOutline />
-                                                        </IconButton>
-                                                    </ListItemSecondaryAction>
-                                                </ListItem>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                    Types
-                                    <ListItem dense button>
-                                        <ListItemIcon>
-                                            <Checkbox
-                                                edge="start"
-                                            />
-                                        </ListItemIcon>
-                                        <ListItemText primary={`Type item`} />
-                                    </ListItem>
-                                    <ListItem dense button>
-                                        <ListItemIcon>
-                                            <Checkbox
-                                                edge="start"
-                                            />
-                                        </ListItemIcon>
-                                        <ListItemText primary={`Type item`} />
-                                    </ListItem>
-                                </List>
-                            </RootRef>
-                        )}
-                    </Droppable>
-                </DragDropContext>
-            </Dialog> */}
         </React.Fragment>
     );
 }

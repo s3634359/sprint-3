@@ -19,10 +19,14 @@ import {
     Checkbox
 } from "@material-ui/core";
 
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
+import { FormGroup, FormControlLabel } from '@material-ui/core';
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import RootRef from "@material-ui/core/RootRef";
@@ -33,62 +37,12 @@ const useStyles = makeStyles((theme) => ({
     icon: {
         marginRight: theme.spacing(2),
     },
-    heroContent: {
-        backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(8, 0, 6),
-    },
-    heroButtons: {
-        marginTop: theme.spacing(4),
-    },
-    cardGrid: {
-        paddingTop: theme.spacing(8),
-        paddingBottom: theme.spacing(8),
-    },
-    card: {
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-    },
-    cardMedia: {
-        paddingTop: '56.25%', // 16:9
-    },
-    cardContent: {
-        flexGrow: 1,
-    },
-    footer: {
-        backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(6),
-    },
     appBar: {
         position: 'relative',
     },
     title: {
         marginLeft: theme.spacing(2),
         flex: 1,
-    },
-    search: {
-        position: 'relative',
-        borderRadius: theme.shape.borderRadius,
-        backgroundColor: fade(theme.palette.common.white, 0.15),
-        '&:hover': {
-            backgroundColor: fade(theme.palette.common.white, 0.25),
-        },
-        marginRight: theme.spacing(2),
-        marginLeft: 0,
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            marginLeft: theme.spacing(3),
-            width: 'auto',
-        },
-    },
-    searchIcon: {
-        padding: theme.spacing(0, 2),
-        height: '100%',
-        position: 'absolute',
-        pointerEvents: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     inputRoot: {
         color: 'inherit',
@@ -114,14 +68,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-// fake data generator
-const getItems = count =>
-    Array.from({ length: count }, (v, k) => k).map(k => ({
-        id: `item-${k}`,
-        primary: `item ${k}`,
-        secondary: k % 2 === 0 ? `Whatever for ${k}` : undefined
-    }));
-
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
@@ -141,7 +87,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 });
 
 const getListStyle = isDraggingOver => ({
-    //background: isDraggingOver ? 'lightblue' : 'lightgrey',
+    background: isDraggingOver ? 'lightgrey' : 'white',
 });
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -154,6 +100,7 @@ function Tour_Item(props) {
     const [locations, setLocations] = React.useState(JSON.parse(props.location));
     const [location_list, set_location_list] = React.useState(JSON.parse(props.location_list));
     const [open, setOpen] = React.useState(false);
+    const [modalOpen, setModalOpen] = React.useState(false);
     const [location_id, set_location_id] = React.useState('');
     const [total, setTotal] = React.useState(locations.length);
 
@@ -167,7 +114,7 @@ function Tour_Item(props) {
                     }
                 }
                 locations.push(selected);
-                
+
                 setTotal(total + 1);
 
                 let index = 1;
@@ -187,14 +134,24 @@ function Tour_Item(props) {
         setOpen(false);
     };
 
+    const modalHandleOpen = (event) => {
+        set_location_id(event.currentTarget.value);
+        setModalOpen(true);
+    };
+
+    const modalHandleClose = () => {
+        setModalOpen(false);
+    };
+
     const handleCancel = () => {
         window.location.href = "/tour";
     };
 
     const handleSave = (event) => {
         event.preventDefault();
-
+        let min_time = 0;
         for (const location of locations) {
+            min_time += location.min_time;
             axios.post('/tourSubmitLocation', {
                 id: tour_id,
                 location_id: location.id,
@@ -207,40 +164,37 @@ function Tour_Item(props) {
                     console.log(error);
                 });
         }
-        //window.location.href = "/tour";
+
+        axios.post('/tourTimeUpdate', {
+            id: tour_id,
+            min_time: min_time,
+        })
+            .then(function (response) {
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+        window.location.href = "/tour";
     };
 
     const handleDelete = (event) => {
-        // axios.post('/tourDeleteLocation', {
-        //     id: tour_id,
-        //     location_id: event.currentTarget.value,
-        // })
-        //     .then(function (response) {
-        //         console.log(response.data);
-        //     })
-        //     .catch(function (error) {
-        //         console.log(error);
-        //     });
+        axios.post('/tourDeleteLocation', {
+            id: tour_id,
+            location_id: location_id,
+        })
+            .then(function (response) {
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
 
-        let backup = locations;
-        let number = 0;
-        for (const location of backup) {
-            if (location.id == event.currentTarget.value) {
-                backup.splice(number, 1);
-            }
-            number += 1;
-        }
-        // let index = 1;
-        // for (const location of backup) {
-        //     location.order = index;
-        //     index += 1;
-        // }
-        //setLocations(backup);
-
+        window.location.reload();
     };
 
     const onDragEnd = (result) => {
-        // dropped outside the list
         if (!result.destination) {
             return;
         }
@@ -257,6 +211,11 @@ function Tour_Item(props) {
         }
         setLocations(tempLocations);
     };
+
+    React.useEffect(() => {
+        
+    }, []);
+
 
     const location_items = [];
     for (const location of location_list) {
@@ -319,7 +278,7 @@ function Tour_Item(props) {
                                                     primary={location.name}
                                                 />
                                                 <ListItemSecondaryAction>
-                                                    <IconButton value={location.id} onClick={handleDelete}>
+                                                    <IconButton value={location.id} onClick={modalHandleOpen}>
                                                         <DeleteOutline />
                                                     </IconButton>
                                                 </ListItemSecondaryAction>
@@ -333,6 +292,24 @@ function Tour_Item(props) {
                     )}
                 </Droppable>
             </DragDropContext>
+            <Dialog
+                open={modalOpen}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={modalHandleClose}
+                aria-labelledby="alert-dialog-slide-title"
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle id="alert-dialog-slide-title">{"Are you sure to delete the location?"}</DialogTitle>
+                <DialogActions>
+                    <Button onClick={modalHandleClose} color="secondary">
+                        Cancel
+                            </Button>
+                    <Button onClick={handleDelete} color="primary">
+                        Yes
+                            </Button>
+                </DialogActions>
+            </Dialog>
         </React.Fragment>
     );
 }
