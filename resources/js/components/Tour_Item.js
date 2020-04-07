@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import axios from 'axios';
 
 import Button from '@material-ui/core/Button';
 import { fade, makeStyles } from '@material-ui/core/styles';
@@ -8,7 +9,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import InputBase from '@material-ui/core/InputBase';
 import {
     List,
     ListItem,
@@ -150,23 +150,36 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function Tour_Item(props) {
     const classes = useStyles();
-    const [types, setTypes] = React.useState(JSON.parse(props.type));
+    const [tour_id, set_tour_id] = React.useState(props.data);
     const [locations, setLocations] = React.useState(JSON.parse(props.location));
-    const [type_list, set_type_list] = React.useState(JSON.parse(props.type_list));
     const [location_list, set_location_list] = React.useState(JSON.parse(props.location_list));
     const [open, setOpen] = React.useState(false);
-    const [items, setItems] = React.useState(getItems(10));
     const [location_id, set_location_id] = React.useState('');
+    const [total, setTotal] = React.useState(locations.length);
 
     const handleChange = (event) => {
-        set_location_id(event.target.value);
+        for (const selected of location_list) {
+            if (selected.id == event.target.value) {
+                for (const location of locations) {
+                    if (location.id == event.target.value) {
+                        alert("Already included!");
+                        return false;
+                    }
+                }
+                locations.push(selected);
+                
+                setTotal(total + 1);
+
+                let index = 1;
+                for (const location of locations) {
+                    location.order = index;
+                    index += 1;
+                }
+            }
+        }
     };
 
     const handleOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClickOpen = () => {
         setOpen(true);
     };
 
@@ -174,39 +187,87 @@ function Tour_Item(props) {
         setOpen(false);
     };
 
+    const handleCancel = () => {
+        window.location.href = "/tour";
+    };
+
+    const handleSave = (event) => {
+        event.preventDefault();
+
+        for (const location of locations) {
+            axios.post('/tourSubmitLocation', {
+                id: tour_id,
+                location_id: location.id,
+                location_order: location.order,
+            })
+                .then(function (response) {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+        //window.location.href = "/tour";
+    };
+
+    const handleDelete = (event) => {
+        // axios.post('/tourDeleteLocation', {
+        //     id: tour_id,
+        //     location_id: event.currentTarget.value,
+        // })
+        //     .then(function (response) {
+        //         console.log(response.data);
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error);
+        //     });
+
+        let backup = locations;
+        let number = 0;
+        for (const location of backup) {
+            if (location.id == event.currentTarget.value) {
+                backup.splice(number, 1);
+            }
+            number += 1;
+        }
+        // let index = 1;
+        // for (const location of backup) {
+        //     location.order = index;
+        //     index += 1;
+        // }
+        //setLocations(backup);
+
+    };
+
     const onDragEnd = (result) => {
         // dropped outside the list
         if (!result.destination) {
             return;
         }
-        const i = reorder(
-            items,
+        const tempLocations = reorder(
+            locations,
             result.source.index,
             result.destination.index
         );
-        setItems(i);
 
+        let index = 1;
+        for (const location of tempLocations) {
+            location.order = index;
+            index += 1;
+        }
+        setLocations(tempLocations);
     };
 
-
-    const tour_type = [];
-    for (const type of types) {
-        tour_type.push(type.name);
-    }
-    const checkboxOnChange = (event) => {
-        if (tour_type.includes(event.target.value)) {
-            tour_type.splice(tour_type.indexOf(event.target.value), 1);
-        } else {
-            tour_type.push(event.target.value);
-        }
-        console.log(tour_type)
+    const location_items = [];
+    for (const location of location_list) {
+        location_items.push(<MenuItem value={location.id}>{location.name}</MenuItem>);
     }
 
     return (
         <React.Fragment>
             <AppBar className={classes.appBar}>
                 <Toolbar>
-                    <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+                    <IconButton edge="start" color="inherit" onClick={handleCancel} aria-label="close">
                         <CloseIcon />
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>Tour Detail</Typography>
@@ -225,12 +286,10 @@ function Tour_Item(props) {
                             <MenuItem value="">
                                 <em>None</em>
                             </MenuItem>
-                            <MenuItem value={4}>Test Location 4</MenuItem>
-                            <MenuItem value={5}>Test Location 5</MenuItem>
-                            <MenuItem value={6}>Test Location 6</MenuItem>
+                            {location_items}
                         </Select>
                     </FormControl>
-                    <Button autoFocus color="inherit" onClick={handleClose}>
+                    <Button autoFocus color="inherit" onClick={handleSave}>
                         save
                         </Button>
                 </Toolbar>
@@ -258,10 +317,9 @@ function Tour_Item(props) {
                                                 </ListItemIcon>
                                                 <ListItemText
                                                     primary={location.name}
-                                                // secondary={item.secondary}
                                                 />
                                                 <ListItemSecondaryAction>
-                                                    <IconButton>
+                                                    <IconButton value={location.id} onClick={handleDelete}>
                                                         <DeleteOutline />
                                                     </IconButton>
                                                 </ListItemSecondaryAction>
@@ -270,20 +328,6 @@ function Tour_Item(props) {
                                     </Draggable>
                                 ))}
                                 {provided.placeholder}
-                                {type_list.map((type) =>
-                                    (
-                                        <ListItem button>
-                                            <ListItemIcon>
-                                                <Checkbox
-                                                    value={type.name}
-                                                    edge="start"
-                                                    checked={tour_type.includes(type.name) ? true : false}
-                                                    onChange={checkboxOnChange}
-                                                />
-                                            </ListItemIcon>
-                                            <ListItemText primary={type.name} />
-                                        </ListItem>)
-                                )}
                             </List>
                         </RootRef>
                     )}
@@ -303,106 +347,3 @@ if (document.getElementById('tour_item')) {
     var type_list = document.getElementById('tour_item').getAttribute('type_list');
     ReactDOM.render(<Tour_Item data={data} type={type} location={location} location_list={location_list} type_list={type_list} />, document.getElementById('tour_item'));
 }
-
-const top100Films = [
-    { title: 'The Shawshank Redemption', year: 1994 },
-    { title: 'The Godfather', year: 1972 },
-    { title: 'The Godfather: Part II', year: 1974 },
-    { title: 'The Dark Knight', year: 2008 },
-    { title: '12 Angry Men', year: 1957 },
-    { title: "Schindler's List", year: 1993 },
-    { title: 'Pulp Fiction', year: 1994 },
-    { title: 'The Lord of the Rings: The Return of the King', year: 2003 },
-    { title: 'The Good, the Bad and the Ugly', year: 1966 },
-    { title: 'Fight Club', year: 1999 },
-    { title: 'The Lord of the Rings: The Fellowship of the Ring', year: 2001 },
-    { title: 'Star Wars: Episode V - The Empire Strikes Back', year: 1980 },
-    { title: 'Forrest Gump', year: 1994 },
-    { title: 'Inception', year: 2010 },
-    { title: 'The Lord of the Rings: The Two Towers', year: 2002 },
-    { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
-    { title: 'Goodfellas', year: 1990 },
-    { title: 'The Matrix', year: 1999 },
-    { title: 'Seven Samurai', year: 1954 },
-    { title: 'Star Wars: Episode IV - A New Hope', year: 1977 },
-    { title: 'City of God', year: 2002 },
-    { title: 'Se7en', year: 1995 },
-    { title: 'The Silence of the Lambs', year: 1991 },
-    { title: "It's a Wonderful Life", year: 1946 },
-    { title: 'Life Is Beautiful', year: 1997 },
-    { title: 'The Usual Suspects', year: 1995 },
-    { title: 'Léon: The Professional', year: 1994 },
-    { title: 'Spirited Away', year: 2001 },
-    { title: 'Saving Private Ryan', year: 1998 },
-    { title: 'Once Upon a Time in the West', year: 1968 },
-    { title: 'American History X', year: 1998 },
-    { title: 'Interstellar', year: 2014 },
-    { title: 'Casablanca', year: 1942 },
-    { title: 'City Lights', year: 1931 },
-    { title: 'Psycho', year: 1960 },
-    { title: 'The Green Mile', year: 1999 },
-    { title: 'The Intouchables', year: 2011 },
-    { title: 'Modern Times', year: 1936 },
-    { title: 'Raiders of the Lost Ark', year: 1981 },
-    { title: 'Rear Window', year: 1954 },
-    { title: 'The Pianist', year: 2002 },
-    { title: 'The Departed', year: 2006 },
-    { title: 'Terminator 2: Judgment Day', year: 1991 },
-    { title: 'Back to the Future', year: 1985 },
-    { title: 'Whiplash', year: 2014 },
-    { title: 'Gladiator', year: 2000 },
-    { title: 'Memento', year: 2000 },
-    { title: 'The Prestige', year: 2006 },
-    { title: 'The Lion King', year: 1994 },
-    { title: 'Apocalypse Now', year: 1979 },
-    { title: 'Alien', year: 1979 },
-    { title: 'Sunset Boulevard', year: 1950 },
-    { title: 'Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb', year: 1964 },
-    { title: 'The Great Dictator', year: 1940 },
-    { title: 'Cinema Paradiso', year: 1988 },
-    { title: 'The Lives of Others', year: 2006 },
-    { title: 'Grave of the Fireflies', year: 1988 },
-    { title: 'Paths of Glory', year: 1957 },
-    { title: 'Django Unchained', year: 2012 },
-    { title: 'The Shining', year: 1980 },
-    { title: 'WALL·E', year: 2008 },
-    { title: 'American Beauty', year: 1999 },
-    { title: 'The Dark Knight Rises', year: 2012 },
-    { title: 'Princess Mononoke', year: 1997 },
-    { title: 'Aliens', year: 1986 },
-    { title: 'Oldboy', year: 2003 },
-    { title: 'Once Upon a Time in America', year: 1984 },
-    { title: 'Witness for the Prosecution', year: 1957 },
-    { title: 'Das Boot', year: 1981 },
-    { title: 'Citizen Kane', year: 1941 },
-    { title: 'North by Northwest', year: 1959 },
-    { title: 'Vertigo', year: 1958 },
-    { title: 'Star Wars: Episode VI - Return of the Jedi', year: 1983 },
-    { title: 'Reservoir Dogs', year: 1992 },
-    { title: 'Braveheart', year: 1995 },
-    { title: 'M', year: 1931 },
-    { title: 'Requiem for a Dream', year: 2000 },
-    { title: 'Amélie', year: 2001 },
-    { title: 'A Clockwork Orange', year: 1971 },
-    { title: 'Like Stars on Earth', year: 2007 },
-    { title: 'Taxi Driver', year: 1976 },
-    { title: 'Lawrence of Arabia', year: 1962 },
-    { title: 'Double Indemnity', year: 1944 },
-    { title: 'Eternal Sunshine of the Spotless Mind', year: 2004 },
-    { title: 'Amadeus', year: 1984 },
-    { title: 'To Kill a Mockingbird', year: 1962 },
-    { title: 'Toy Story 3', year: 2010 },
-    { title: 'Logan', year: 2017 },
-    { title: 'Full Metal Jacket', year: 1987 },
-    { title: 'Dangal', year: 2016 },
-    { title: 'The Sting', year: 1973 },
-    { title: '2001: A Space Odyssey', year: 1968 },
-    { title: "Singin' in the Rain", year: 1952 },
-    { title: 'Toy Story', year: 1995 },
-    { title: 'Bicycle Thieves', year: 1948 },
-    { title: 'The Kid', year: 1921 },
-    { title: 'Inglourious Basterds', year: 2009 },
-    { title: 'Snatch', year: 2000 },
-    { title: '3 Idiots', year: 2009 },
-    { title: 'Monty Python and the Holy Grail', year: 1975 },
-];
