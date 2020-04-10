@@ -185,12 +185,23 @@ function Tour_Item(props) {
             location_id: location_id,
         })
             .then(function (response) {
-                console.log(response.data);
+                console.log(JSON.parse(response.config.data).location_id);
+                var backup = locations;
+                var number = 0;
+                for (let location of backup) {
+                    if (location.id == JSON.parse(response.config.data).location_id) {
+                        backup.splice(number, 1);
+                    }
+                    number += 1;
+                }
+                setLocations(backup);
+                console.log(backup);
             })
             .catch(function (error) {
                 console.log(error);
             });
 
+        modalHandleClose();
         window.location.reload();
     };
 
@@ -213,8 +224,8 @@ function Tour_Item(props) {
     };
 
     React.useEffect(() => {
-        
-    }, []);
+
+    }, [locations]);
 
 
     const location_items = [];
