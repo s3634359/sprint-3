@@ -186,23 +186,15 @@ function Tour_Item(props) {
         })
             .then(function (response) {
                 console.log(JSON.parse(response.config.data).location_id);
-                var backup = locations;
-                var number = 0;
-                for (let location of backup) {
-                    if (location.id == JSON.parse(response.config.data).location_id) {
-                        backup.splice(number, 1);
-                    }
-                    number += 1;
-                }
-                setLocations(backup);
-                console.log(backup);
+                
+                setLocations(locations.filter(location => location.id != JSON.parse(response.config.data).location_id));
             })
             .catch(function (error) {
                 console.log(error);
             });
 
         modalHandleClose();
-        window.location.reload();
+        //window.location.reload();
     };
 
     const onDragEnd = (result) => {
@@ -223,15 +215,16 @@ function Tour_Item(props) {
         setLocations(tempLocations);
     };
 
-    React.useEffect(() => {
-
-    }, [locations]);
-
-
     const location_items = [];
     for (const location of location_list) {
         location_items.push(<MenuItem value={location.id}>{location.name}</MenuItem>);
     }
+
+    React.useEffect(() => {
+    }, [locations]);
+
+
+    
 
     return (
         <React.Fragment>

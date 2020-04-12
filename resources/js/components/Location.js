@@ -123,16 +123,14 @@ function Location(props) {
         cancel();
 
         //List update
-        var backup = locations;
-        backup.push({
+        setLocations([...locations, {
             id: locations[locations.length - 1].id + 1,
-            name: name,
+            name: copied,
             x_axis: x_axis,
             y_axis: y_axis,
             description: description,
             min_time: minTime,
-        });
-        setLocations(backup);
+        }])
 
     };
 
@@ -161,17 +159,14 @@ function Location(props) {
 
         cancel();
 
-        //List update
-        var backup = locations;
-        backup.push({
+        setLocations([...locations, {
             id: locations[locations.length - 1].id + 1,
             name: copied,
             x_axis: x_axis,
             y_axis: y_axis,
             description: description,
             min_time: minTime,
-        });
-        setLocations(backup);
+        }])
     };
 
     const edit = () => {
