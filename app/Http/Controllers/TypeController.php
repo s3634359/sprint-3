@@ -48,5 +48,10 @@ class TypeController extends Controller
             ->delete();
         return response()->json([$request->all()]);
     }
+
+    public function getTourType()
+    {
+       return view('tour_type');
+    }
     
 }

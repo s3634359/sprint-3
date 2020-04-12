@@ -50,13 +50,6 @@ class TourController extends Controller
         return view('tour_item')->with('type', json_encode($type))->with('location', json_encode($location))->with('location_list', json_encode($location_list))->with('type_list', json_encode($type_list));
     }
 
-    public function getTourType(Request $request)
-    {
-        $type_list = DB::select('select * from types');
-        $type = DB::select('select type_id as id, name from types, tours_types where types.id = tours_types.type_id and tours_types.tour_id = ?', [$request['id']]);
-        return view('tour_type')->with('type', json_encode($type))->with('type_list', json_encode($type_list));
-    }
-
     public function tourSubmit(Request $request)
     {
         DB::insert('insert into locations values (NULL, ?, ?, ?, ?, ?, NOW(), NULL)', [$request['name'], $request['x_axis'], $request['y_axis'], $request['description'], $request['min_time']]);

@@ -36,9 +36,4 @@ class HomeController extends Controller
             ->delete();
         return response()->json([$request->all()]);
     }
-
-    public function type()
-    {
-        return view('type');
-    }
 }

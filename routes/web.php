@@ -34,8 +34,8 @@ Route::post('/tourTimeUpdate', 'TourController@tourTimeUpdate')->middleware('can
 Route::post('/tourDeleteLocation', 'TourController@tourDeleteLocation')->middleware('can:admin');
 Route::post('/tourSubmitLocation', 'TourController@tourSubmitLocation')->middleware('can:admin');
 
+Route::get('/tour_type', 'TypeController@getTourType')->name('tour_type');
 Route::get('/tour_item', 'TourController@getTourItem')->name('tour_item');
-Route::get('/tour_type', 'TourController@getTourType')->name('tour_type');
 
 Route::get('/type', 'TypeController@getTypes')->name('type');
 Route::post('/typeSubmit', 'TypeController@typeSubmit')->middleware('can:admin');
