@@ -64,16 +64,16 @@ function Home(props) {
                                         })
                                             .then(function (response) {
                                                 console.log(response.data);
+                                                setState((prevState) => {
+                                                    const data = [...prevState.data];
+                                                    data.splice(data.indexOf(oldData), 1);
+                                                    return { ...prevState, data };
+                                                });
                                             })
                                             .catch(function (error) {
                                                 console.log(error);
+                                                alert("Only admins can deactivate accounts");
                                             });
-
-                                        setState((prevState) => {
-                                            const data = [...prevState.data];
-                                            data.splice(data.indexOf(oldData), 1);
-                                            return { ...prevState, data };
-                                        });
                                     }, 600);
                                 }),
                         }}

@@ -9,31 +9,14 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Grid from '@material-ui/core/Grid';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import Dialog from '@material-ui/core/Dialog';
-import Divider from '@material-ui/core/Divider';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import InputBase from '@material-ui/core/InputBase';
-import {
-    List,
-    ListItem,
-    ListItemText,
-    ListItemIcon,
-    IconButton,
-    ListItemSecondaryAction,
-    Checkbox
-} from "@material-ui/core";
-
-
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import RootRef from "@material-ui/core/RootRef";
-import LocationOn from "@material-ui/icons/LocationOn";
-import DeleteOutline from "@material-ui/icons/Delete";
-import SearchIcon from '@material-ui/icons/Search';
-import Tour_Item from './Tour_Item';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogTitle';
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -155,33 +138,62 @@ function Tour(props) {
     const [locations, setLocations] = React.useState(JSON.parse(props.location));
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
-    const [items, setItems] = React.useState(getItems(10));
+    const [newTour, setNewTour] = React.useState('');
+    const [modalOpen, setModalOpen] = React.useState(false);
+    const [tour_id, set_tour_id] = React.useState('');
 
-    //const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-    const handleClickOpen = (id) => {
+    const handleOpen = () => {
         setOpen(true);
-        window.location.href = "/tour_item?id=" + id;
     };
 
     const handleClose = () => {
         setOpen(false);
     };
 
-    const onDragEnd = (result) => {
-        // dropped outside the list
-        if (!result.destination) {
-            return;
-        }
-        const i = reorder(
-            items,
-            result.source.index,
-            result.destination.index
-        );
-        setItems(i);
+    const handleDelete = (event) => {
+        axios.post('/deleteTour', {
+            id: tour_id,
+        })
+            .then(function (response) {
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        modalHandleClose();
 
+        setTours(tours.filter(tour => tour.id != tour_id));
+        //window.location.reload();
     };
 
-    console.log(types);
+    const modalHandleOpen = (event) => {
+        set_tour_id(event.currentTarget.value);
+        setModalOpen(true);
+    };
+
+    const modalHandleClose = () => {
+        setModalOpen(false);
+    };
+
+    const createNewTour = () => {
+        axios.post('/newTourSubmit', {
+            name: newTour,
+        })
+            .then(function (response) {
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        handleClose();
+
+        setTours([...tours, {
+            id: tours[tours.length - 1].id + 1,
+            name: newTour,
+            min_time: 0,
+        }])
+        //window.location.reload();
+    };
 
     return (
         <React.Fragment>
@@ -193,20 +205,13 @@ function Tour(props) {
                             Tour
                         </Typography>
                         <Typography variant="h5" align="center" color="textSecondary" paragraph>
-                            Something short and leading about the collection below—its contents, the creator, etc.
-                            Make it short and sweet, but not too short so folks don&apos;t simply skip over it
-                            entirely.
+                            Built in 1879 for Melbourne’s first International Exhibition, it was chosen as the venue for the opening of the first Commonwealth Parliament of Australia on 9 May 1901, and recently became Australia’s first World Heritage Listed building.
                         </Typography>
                         <div className={classes.heroButtons}>
                             <Grid container spacing={2} justify="center">
                                 <Grid item>
-                                    <Button variant="contained" color="primary">
-                                        Main call to action
-                                    </Button>
-                                </Grid>
-                                <Grid item>
-                                    <Button variant="outlined" color="primary">
-                                        Secondary action
+                                    <Button variant="contained" color="primary" onClick={handleOpen}>
+                                        Add a new tour
                                     </Button>
                                 </Grid>
                             </Grid>
@@ -228,7 +233,7 @@ function Tour(props) {
                                         <Typography gutterBottom variant="h5" component="h2">
                                             {tour.name} ({tour.min_time} sec.)
                                         </Typography>
-                                        {types.map((type) => type.tour_name = tour.name ? (<Button variant="contained" className={classes.typeButton}>{type.name}</Button>) : NULL)}
+                                        {types.map((type) => type.tour_id === tour.id ? <Button variant="contained" className={classes.typeButton}>{type.name}</Button> : "")}
                                     </CardContent>
                                     <CardActions>
                                         <Button size="small" color="primary" onClick={() => window.location.href = "/tour_item?id=" + tour.id} >
@@ -237,6 +242,9 @@ function Tour(props) {
                                         <Button size="small" color="primary" onClick={() => window.location.href = "/tour_type?id=" + tour.id} >
                                             Type
                                         </Button>
+                                        <Button size="small" color="secondary" value={tour.id} onClick={modalHandleOpen} >
+                                            Delete
+                                        </Button>
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -244,6 +252,50 @@ function Tour(props) {
                     </Grid>
                 </Container>
             </main>
+            <Dialog
+                open={modalOpen}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={modalHandleClose}
+                aria-labelledby="alert-dialog-slide-title"
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle id="alert-dialog-slide-title">{"Are you sure to delete the tour?"}</DialogTitle>
+                <DialogActions>
+                    <Button onClick={modalHandleClose} color="secondary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDelete} color="primary">
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">New Tour</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Locations can be added after creating a new tour.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label="Tour Name"
+                        type="text"
+                        value={newTour}
+                        onChange={(e) => setNewTour(e.target.value)}
+                        fullWidth
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={createNewTour} color="primary">
+                        Add
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </React.Fragment>
     );
 }

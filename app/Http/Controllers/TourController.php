@@ -24,7 +24,7 @@ class TourController extends Controller
     public function getTours()
     {
         $data = DB::select('select * from tours');
-        $type = DB::select('select * from tours_types, tours where tours.id = tours_types.tour_id');
+        $type = DB::select('select tour_id, type_id, types.name as name from tours_types, tours, types where tours.id = tours_types.tour_id and tours_types.type_id = types.id');
         $location = DB::select('select * from locations, tours_locations where locations.id = tours_locations.location_id');
         return view('tour')->with('data', json_encode($data))->with('type', json_encode($type))->with('location', json_encode($location));
     }
@@ -44,10 +44,8 @@ class TourController extends Controller
     public function getTourItem(Request $request)
     {
         $location_list = DB::select('select id, name, min_time from locations');
-        $type_list = DB::select('select * from types');
-        $type = DB::select('select type_id as id, name from types, tours_types where types.id = tours_types.type_id and tours_types.tour_id = ?', [$request['id']]);
         $location = DB::select('select tours_locations.location_id as id, name, min_time, tours_locations.order from locations, tours_locations where tours_locations.tour_id = '. $request->id .' and locations.id = tours_locations.location_id order by tours_locations.order ASC');
-        return view('tour_item')->with('type', json_encode($type))->with('location', json_encode($location))->with('location_list', json_encode($location_list))->with('type_list', json_encode($type_list));
+        return view('tour_item')->with('location', json_encode($location))->with('location_list', json_encode($location_list));
     }
 
     public function tourSubmit(Request $request)
@@ -85,6 +83,29 @@ class TourController extends Controller
         DB::delete('delete from tours_locations where tour_id = ? and location_id = ?', [$request['id'], $request['location_id']]);
         return response()->json([$request->all()]);
     }
+
+    public function getTourType(Request $request)
+    {
+        $type_list = DB::select('select * from types');
+        $type = DB::select('select type_id as id, name from types, tours_types where types.id = tours_types.type_id and tours_types.tour_id = ?', [$request['id']]);
+        return view('tour_type')->with('type', json_encode($type))->with('type_list', json_encode($type_list));
+    }
+
+    public function tourSubmitType(Request $request)
+    {
+        $data = DB::select('select * from tours_types where tour_id = ? and type_id = ?', [$request['id'], $request['type_id']]);
+        if ($data == null) {
+            DB::insert('insert into tours_types values (NULL, ?, ?)', [$request['id'], $request['type_id']]);
+        }
+        return response()->json([$request->all()]);
+    }
+
+    public function tourDeleteType(Request $request)
+    {
+        DB::delete('delete from tours_types where tour_id = ? and type_id = ?', [$request['id'], $request['type_id']]);
+        return response()->json([$request->all()]);
+    }
+    
 
 
 

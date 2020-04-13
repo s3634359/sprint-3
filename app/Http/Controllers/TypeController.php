@@ -49,9 +49,4 @@ class TypeController extends Controller
         return response()->json([$request->all()]);
     }
 
-    public function getTourType()
-    {
-       return view('tour_type');
-    }
-    
 }

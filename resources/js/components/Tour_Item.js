@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 
 import Button from '@material-ui/core/Button';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -16,7 +16,6 @@ import {
     ListItemIcon,
     IconButton,
     ListItemSecondaryAction,
-    Checkbox
 } from "@material-ui/core";
 
 import Dialog from '@material-ui/core/Dialog';
@@ -26,7 +25,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
-import { FormGroup, FormControlLabel } from '@material-ui/core';
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import RootRef from "@material-ui/core/RootRef";
@@ -43,24 +41,6 @@ const useStyles = makeStyles((theme) => ({
     title: {
         marginLeft: theme.spacing(2),
         flex: 1,
-    },
-    inputRoot: {
-        color: 'inherit',
-    },
-    inputInput: {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('md')]: {
-            width: '20ch',
-        },
-    },
-    typeButton: {
-        height: '40%',
-        margin: theme.spacing(0.3),
-        background: 'white',
     },
     formControl: {
         margin: theme.spacing(1),
@@ -180,6 +160,8 @@ function Tour_Item(props) {
     };
 
     const handleDelete = (event) => {
+        event.preventDefault();
+
         axios.post('/tourDeleteLocation', {
             id: tour_id,
             location_id: location_id,
@@ -194,7 +176,6 @@ function Tour_Item(props) {
             });
 
         modalHandleClose();
-        //window.location.reload();
     };
 
     const onDragEnd = (result) => {
@@ -222,9 +203,6 @@ function Tour_Item(props) {
 
     React.useEffect(() => {
     }, [locations]);
-
-
-    
 
     return (
         <React.Fragment>
@@ -322,9 +300,7 @@ export default Tour_Item;
 
 if (document.getElementById('tour_item')) {
     var data = document.getElementById('tour_item').getAttribute('tour_id');
-    var type = document.getElementById('tour_item').getAttribute('type');
     var location = document.getElementById('tour_item').getAttribute('location');
     var location_list = document.getElementById('tour_item').getAttribute('location_list');
-    var type_list = document.getElementById('tour_item').getAttribute('type_list');
-    ReactDOM.render(<Tour_Item data={data} type={type} location={location} location_list={location_list} type_list={type_list} />, document.getElementById('tour_item'));
+   ReactDOM.render(<Tour_Item data={data} location={location} location_list={location_list} />, document.getElementById('tour_item'));
 }

@@ -19,7 +19,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::post('/accountDelete', 'HomeController@accountDelete');
+Route::post('/accountDelete', 'HomeController@accountDelete')->middleware('can:admin');
 
 Route::get('/location', 'LocationController@getLocations')->name('location');
 Route::post('/locationSubmit', 'LocationController@locationSubmit');
@@ -34,7 +34,10 @@ Route::post('/tourTimeUpdate', 'TourController@tourTimeUpdate')->middleware('can
 Route::post('/tourDeleteLocation', 'TourController@tourDeleteLocation')->middleware('can:admin');
 Route::post('/tourSubmitLocation', 'TourController@tourSubmitLocation')->middleware('can:admin');
 
-Route::get('/tour_type', 'TypeController@getTourType')->name('tour_type');
+Route::post('/tourDeleteType', 'TourController@tourDeleteType')->middleware('can:admin');
+Route::post('/tourSubmitType', 'TourController@tourSubmitType')->middleware('can:admin');
+
+Route::get('/tour_type', 'TourController@getTourType')->name('tour_type');
 Route::get('/tour_item', 'TourController@getTourItem')->name('tour_item');
 
 Route::get('/type', 'TypeController@getTypes')->name('type');
