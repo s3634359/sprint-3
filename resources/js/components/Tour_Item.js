@@ -130,6 +130,9 @@ function Tour_Item(props) {
     const handleSave = (event) => {
         event.preventDefault();
         let min_time = 0;
+        if (locations.length == 0) {
+            handleCancel();
+        }
         for (const location of locations) {
             min_time += location.min_time;
             axios.post('/tourSubmitLocation', {
@@ -151,12 +154,12 @@ function Tour_Item(props) {
         })
             .then(function (response) {
                 console.log(response.data);
+                handleCancel();
             })
             .catch(function (error) {
                 console.log(error);
             });
 
-        window.location.href = "/tour";
     };
 
     const handleDelete = (event) => {
@@ -168,7 +171,7 @@ function Tour_Item(props) {
         })
             .then(function (response) {
                 console.log(JSON.parse(response.config.data).location_id);
-                
+
                 setLocations(locations.filter(location => location.id != JSON.parse(response.config.data).location_id));
             })
             .catch(function (error) {
@@ -302,5 +305,5 @@ if (document.getElementById('tour_item')) {
     var data = document.getElementById('tour_item').getAttribute('tour_id');
     var location = document.getElementById('tour_item').getAttribute('location');
     var location_list = document.getElementById('tour_item').getAttribute('location_list');
-   ReactDOM.render(<Tour_Item data={data} location={location} location_list={location_list} />, document.getElementById('tour_item'));
+    ReactDOM.render(<Tour_Item data={data} location={location} location_list={location_list} />, document.getElementById('tour_item'));
 }

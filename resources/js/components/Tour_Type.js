@@ -10,12 +10,8 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import {
-    List,
-    ListItem,
-    ListItemText,
-    ListItemIcon,
     IconButton,
-    ListItemSecondaryAction,
+    CircularProgress,
 } from "@material-ui/core";
 
 import Dialog from '@material-ui/core/Dialog';
@@ -25,10 +21,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
-
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import RootRef from "@material-ui/core/RootRef";
-import LocationOn from "@material-ui/icons/LocationOn";
 import DeleteOutline from "@material-ui/icons/Delete";
 
 import Table from "@material-ui/core/Table";
@@ -80,6 +72,7 @@ function Tour_Type(props) {
     const [type_id, set_type_id] = React.useState('');
     const [open, setOpen] = React.useState(false);
     const [modalOpen, setModalOpen] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
     const handleChange = (event) => {
         for (const selected of type_list) {
@@ -118,6 +111,9 @@ function Tour_Type(props) {
 
     const handleSave = (event) => {
         event.preventDefault();
+        if (types.length == 0) {
+            handleCancel();
+        }
         for (const type of types) {
             axios.post('/tourSubmitType', {
                 id: tour_id,
@@ -125,13 +121,14 @@ function Tour_Type(props) {
             })
                 .then(function (response) {
                     console.log(response.data);
+                    setLoading(true);
+                    handleCancel();
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
         }
 
-        window.location.href = "/tour";
     };
 
     const handleDelete = (event) => {
@@ -190,30 +187,31 @@ function Tour_Type(props) {
             </AppBar>
             <div className={classes.container}>
                 <Typography variant="h4" className={classes.title}>Tour Types</Typography>
-                <Paper>
-                    <Table className={classes.table}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell align="center">Delete</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {types.map(({ id, name }) => (
-                                <TableRow key={id}>
-                                    <TableCell component="th" scope="row">
-                                        {name}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <IconButton value={id} onClick={modalHandleOpen}>
-                                            <DeleteOutline />
-                                        </IconButton>
-                                    </TableCell>
+                {loading === true ? <CircularProgress /> : (
+                    <Paper>
+                        <Table className={classes.table}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell align="center">Delete</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </Paper>
+                            </TableHead>
+                            <TableBody>
+                                {types.map(({ id, name }) => (
+                                    <TableRow key={id}>
+                                        <TableCell component="th" scope="row">
+                                            {name}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <IconButton value={id} onClick={modalHandleOpen}>
+                                                <DeleteOutline />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </Paper>)}
             </div>
             <Dialog
                 open={modalOpen}
