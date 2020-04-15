@@ -238,6 +238,7 @@ function Tour_Item(props) {
                         </Button>
                 </Toolbar>
             </AppBar>
+            {locations.length === 0 ? <Typography variant="h6" className={classes.title}>No Locations</Typography> :
             <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="droppable">
                     {(provided, snapshot) => (
@@ -277,6 +278,7 @@ function Tour_Item(props) {
                     )}
                 </Droppable>
             </DragDropContext>
+            }
             <Dialog
                 open={modalOpen}
                 TransitionComponent={Transition}

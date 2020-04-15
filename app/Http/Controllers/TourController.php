@@ -106,23 +106,4 @@ class TourController extends Controller
         return response()->json([$request->all()]);
     }
     
-
-
-
-    // public function locationEdit(Request $request)
-    // {   
-    //     DB::table('locations')
-    //         ->where('id', $request['id'])
-    //         ->update(['name' => $request['name'], 'x_axis' => $request['x_axis'], 'y_axis' => $request['y_axis'], 'description' => $request['description'], 'min_time' => $request['min_time'], 'updated_at' => now()]);
-    //     return response()->json([$request->all()]);
-    // }
-
-    // public function locationRemove(Request $request)
-    // {
-    //     DB::table('locations')
-    //         ->where('id', $request['id'])
-    //         ->delete();
-    //     return response()->json([$request->all()]);
-    // }
-    
 }

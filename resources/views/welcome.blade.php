@@ -63,6 +63,8 @@
             }
         </style>
     </head>
+
+    <!-- Main -->
     <body>
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
@@ -81,13 +83,6 @@
 
             <div class="content">
                 <div id="index" class="title m-b-md"></div>
-                <!-- <div class="title m-b-md">
-                    Humanoid
-                </div>
-
-                <div class="links">
-                    Welcome to the Humanoid Tour Management System
-                </div> -->
             </div>
         </div>
         <script type="text/javascript" src="js/app.js"></script>

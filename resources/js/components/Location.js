@@ -1,56 +1,55 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import axios from 'axios';
+import React from "react";
+import ReactDOM from "react-dom";
+import axios from "axios";
 
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Slide from '@material-ui/core/Slide';
-import Divider from '@material-ui/core/Divider';
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Slide from "@material-ui/core/Slide";
+import Divider from "@material-ui/core/Divider";
 
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import LocationOn from "@material-ui/icons/LocationOn";
 
-import LocationOn from '@material-ui/icons/LocationOn';
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
     paper: {
         marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center"
     },
     avatar: {
         margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main,
+        backgroundColor: theme.palette.secondary.main
     },
     form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3),
+        width: "100%", // Fix IE 11 issue.
+        marginTop: theme.spacing(3)
     },
     submit: {
-        width: '10%',
-        margin: theme.spacing(3, 1, 2),
+        width: "10%",
+        margin: theme.spacing(3, 1, 2)
     },
     list: {
-        width: '100%',
-        backgroundColor: theme.palette.background.paper,
+        width: "100%",
+        backgroundColor: theme.palette.background.paper
     },
     listItem: {
-        width: '22%',
+        width: "22%"
     },
     listItemHead: {
-        width: '28%',
-    },
+        width: "28%"
+    }
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -60,12 +59,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function Location(props) {
     const [locations, setLocations] = React.useState(JSON.parse(props.data));
     const classes = useStyles();
-    const [id, setId] = React.useState('');
-    const [name, setName] = React.useState('');
-    const [x_axis, setx_axis] = React.useState('');
-    const [y_axis, sety_axis] = React.useState('');
+    const [id, setId] = React.useState("");
+    const [name, setName] = React.useState("");
+    const [x_axis, setx_axis] = React.useState("");
+    const [y_axis, sety_axis] = React.useState("");
     const [minTime, setMinTime] = React.useState(0);
-    const [description, setDescription] = React.useState('');
+    const [description, setDescription] = React.useState("");
     const [open, setOpen] = React.useState(false);
 
     const [addBtn, setAddBtn] = React.useState(false);
@@ -81,92 +80,95 @@ function Location(props) {
         setOpen(false);
     };
 
-    const handleName = (event) => {
+    const handleName = event => {
         setName(event.target.value);
     };
 
-    const handleX = (event) => {
+    const handleX = event => {
         setx_axis(event.target.value);
     };
 
-    const handleY = (event) => {
+    const handleY = event => {
         sety_axis(event.target.value);
     };
 
-    const handleDescription = (event) => {
+    const handleDescription = event => {
         //Presentations: between 100 - 150 wpm for a comfortable pace
         //Assume Robot speaks 2 words every second
         setDescription(event.target.value);
         setMinTime(event.target.value.split(" ").length / 2);
     };
 
-    const add = (event) => {
+    const add = event => {
         // add
         event.preventDefault();
         setx_axis(parseFloat(x_axis).toFixed(2));
         sety_axis(parseFloat(y_axis).toFixed(2));
 
-        axios.post('/locationSubmit', {
-            name: name,
-            x_axis: x_axis,
-            y_axis: y_axis,
-            description: description,
-            min_time: minTime,
-        })
-            .then(function (response) {
-                console.log(response.data);
+        axios
+            .post("/locationSubmit", {
+                name: name,
+                x_axis: x_axis,
+                y_axis: y_axis,
+                description: description,
+                min_time: minTime
             })
-            .catch(function (error) {
+            .then(function(response) {
+                //List update
+                setLocations([
+                    ...locations,
+                    {
+                        id: locations[locations.length - 1].id + 1,
+                        name: name,
+                        x_axis: x_axis,
+                        y_axis: y_axis,
+                        description: description,
+                        min_time: minTime
+                    }
+                ]);
+            })
+            .catch(function(error) {
                 console.log(error);
             });
 
         cancel();
-
-        //List update
-        setLocations([...locations, {
-            id: locations[locations.length - 1].id + 1,
-            name: copied,
-            x_axis: x_axis,
-            y_axis: y_axis,
-            description: description,
-            min_time: minTime,
-        }])
-
     };
 
-    const copy = (event) => {
+    const copy = event => {
         // copy
         event.preventDefault();
         setx_axis(parseFloat(x_axis).toFixed(2));
         sety_axis(parseFloat(y_axis).toFixed(2));
 
-        var copied = name
+        var copied = name;
         copied += "-copy";
 
-        axios.post('/locationSubmit', {
-            name: copied,
-            x_axis: x_axis,
-            y_axis: y_axis,
-            description: description,
-            min_time: minTime,
-        })
-            .then(function (response) {
-                console.log(response.data);
+        axios
+            .post("/locationSubmit", {
+                name: copied,
+                x_axis: x_axis,
+                y_axis: y_axis,
+                description: description,
+                min_time: minTime
             })
-            .catch(function (error) {
+            .then(function(response) {
+                setLocations([
+                    ...locations,
+                    {
+                        id: locations[locations.length - 1].id + 1,
+                        name: copied,
+                        x_axis: x_axis,
+                        y_axis: y_axis,
+                        description: description,
+                        min_time: minTime
+                    }
+                ]);
+            })
+            .catch(function(error) {
                 console.log(error);
             });
 
         cancel();
-
-        setLocations([...locations, {
-            id: locations[locations.length - 1].id + 1,
-            name: copied,
-            x_axis: x_axis,
-            y_axis: y_axis,
-            description: description,
-            min_time: minTime,
-        }])
     };
 
     const edit = () => {
@@ -174,18 +176,19 @@ function Location(props) {
         setx_axis(parseFloat(x_axis).toFixed(2));
         sety_axis(parseFloat(y_axis).toFixed(2));
 
-        axios.post('/locationEdit', {
-            id: id,
-            name: name,
-            x_axis: x_axis,
-            y_axis: y_axis,
-            description: description,
-            min_time: minTime,
-        })
-            .then(function (response) {
+        axios
+            .post("/locationEdit", {
+                id: id,
+                name: name,
+                x_axis: x_axis,
+                y_axis: y_axis,
+                description: description,
+                min_time: minTime
+            })
+            .then(function(response) {
                 console.log(response.data);
             })
-            .catch(function (error) {
+            .catch(function(error) {
                 console.log(error);
             });
 
@@ -206,13 +209,14 @@ function Location(props) {
     const remove = () => {
         event.preventDefault();
 
-        axios.post('/locationRemove', {
-            id: id,
-        })
-            .then(function (response) {
+        axios
+            .post("/locationRemove", {
+                id: id
+            })
+            .then(function(response) {
                 console.log(response.data);
             })
-            .catch(function (error) {
+            .catch(function(error) {
                 console.log(error);
             });
 
@@ -230,11 +234,11 @@ function Location(props) {
     };
 
     const cancel = () => {
-        setName('');
-        setx_axis('');
-        sety_axis('');
-        setDescription('');
-        setMinTime('');
+        setName("");
+        setx_axis("");
+        sety_axis("");
+        setDescription("");
+        setMinTime("");
         setOpen(false);
         setSelectedIndex(0);
 
@@ -261,17 +265,74 @@ function Location(props) {
         setEditBtn(false);
     };
 
-
-
-    const list = [<ListItem button><ListItemText className={classes.listItemHead} align="center" primary={"Location Name"} /><ListItemText className={classes.listItem} align="center" primary={"X"} /><ListItemText className={classes.listItem} align="center" primary={"Y"} /><ListItemText className={classes.listItem} align="center" primary={"T"} /></ListItem>];
+    const list = [
+        <ListItem button>
+            <ListItemText
+                className={classes.listItemHead}
+                align="center"
+                primary={"Location Name"}
+            />
+            <ListItemText
+                className={classes.listItem}
+                align="center"
+                primary={"X"}
+            />
+            <ListItemText
+                className={classes.listItem}
+                align="center"
+                primary={"Y"}
+            />
+            <ListItemText
+                className={classes.listItem}
+                align="center"
+                primary={"T"}
+            />
+        </ListItem>
+    ];
     for (const location of locations) {
-        list.push(<ListItem button selected={selectedIndex === location.id} onClick={(event) => handleListItemClick(event, location.id)}><ListItemIcon><LocationOn /></ListItemIcon><ListItemText className={classes.listItem} align="center" primary={location.name} /><ListItemText className={classes.listItem} align="center" primary={location.x_axis} /><ListItemText className={classes.listItem} align="center" primary={location.y_axis} /><ListItemText className={classes.listItem} align="center" primary={location.min_time} /></ListItem>);
+        list.push(
+            <ListItem
+                button
+                selected={selectedIndex === location.id}
+                onClick={event => handleListItemClick(event, location.id)}
+            >
+                <ListItemIcon>
+                    <LocationOn />
+                </ListItemIcon>
+                <ListItemText
+                    className={classes.listItem}
+                    align="center"
+                    primary={location.name}
+                />
+                <ListItemText
+                    className={classes.listItem}
+                    align="center"
+                    primary={location.x_axis}
+                />
+                <ListItemText
+                    className={classes.listItem}
+                    align="center"
+                    primary={location.y_axis}
+                />
+                <ListItemText
+                    className={classes.listItem}
+                    align="center"
+                    primary={location.min_time}
+                />
+            </ListItem>
+        );
     }
 
     return (
         <Container component="main" maxWidth="md">
             <div className={classes.paper}>
-                <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
+                <Typography
+                    component="h1"
+                    variant="h2"
+                    align="center"
+                    color="textPrimary"
+                    gutterBottom
+                >
                     Location
                 </Typography>
                 <form className={classes.form} noValidate>
@@ -345,19 +406,47 @@ function Location(props) {
                             />
                         </Grid>
                     </Grid>
-                    <Button className={classes.submit} variant="outlined" color="inherit" onClick={add} disabled={addBtn}>
+                    <Button
+                        className={classes.submit}
+                        variant="outlined"
+                        color="inherit"
+                        onClick={add}
+                        disabled={addBtn}
+                    >
                         Add
                     </Button>
-                    <Button className={classes.submit} variant="outlined" color="primary" onClick={edit} disabled={editBtn}>
+                    <Button
+                        className={classes.submit}
+                        variant="outlined"
+                        color="primary"
+                        onClick={edit}
+                        disabled={editBtn}
+                    >
                         Edit
                     </Button>
-                    <Button className={classes.submit} variant="outlined" color="primary" onClick={copy} disabled={editBtn}>
+                    <Button
+                        className={classes.submit}
+                        variant="outlined"
+                        color="primary"
+                        onClick={copy}
+                        disabled={editBtn}
+                    >
                         Copy
                     </Button>
-                    <Button className={classes.submit} variant="outlined" color="secondary" onClick={handleClickOpen} disabled={removeBtn}>
+                    <Button
+                        className={classes.submit}
+                        variant="outlined"
+                        color="secondary"
+                        onClick={handleClickOpen}
+                        disabled={removeBtn}
+                    >
                         Remove
                     </Button>
-                    <Button className={classes.submit} variant="outlined" onClick={cancel}>
+                    <Button
+                        className={classes.submit}
+                        variant="outlined"
+                        onClick={cancel}
+                    >
                         Cancel
                     </Button>
 
@@ -369,7 +458,9 @@ function Location(props) {
                         aria-labelledby="alert-dialog-slide-title"
                         aria-describedby="alert-dialog-slide-description"
                     >
-                        <DialogTitle id="alert-dialog-slide-title">{"Are you sure to delete the location?"}</DialogTitle>
+                        <DialogTitle id="alert-dialog-slide-title">
+                            {"Are you sure to delete the location?"}
+                        </DialogTitle>
                         <DialogActions>
                             <Button onClick={handleClose} color="secondary">
                                 Cancel
@@ -393,8 +484,10 @@ function Location(props) {
 
 export default Location;
 
-
-if (document.getElementById('location')) {
-    var data = document.getElementById('location').getAttribute('data');
-    ReactDOM.render(<Location data={data} />, document.getElementById('location'));
+if (document.getElementById("location")) {
+    var data = document.getElementById("location").getAttribute("data");
+    ReactDOM.render(
+        <Location data={data} />,
+        document.getElementById("location")
+    );
 }
