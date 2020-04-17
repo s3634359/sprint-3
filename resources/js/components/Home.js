@@ -3,10 +3,8 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 
 import MaterialTable from 'material-table';
-
-import Typography from '@material-ui/core/Typography';
+import { Typography, Container } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 
 const useStyles = makeStyles((theme) => ({
     heroContent: {
@@ -25,6 +23,7 @@ function Home(props) {
         list.push({ name: user.name, email: user.email, position: user.position });
     }
 
+    // Account table state
     const [state, setState] = React.useState({
         columns: [
             { title: 'Name', field: 'name' },

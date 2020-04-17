@@ -1,51 +1,48 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import axios from 'axios';
+import React from "react";
+import ReactDOM from "react-dom";
+import axios from "axios";
 
-import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
-import Slide from '@material-ui/core/Slide';
+import { makeStyles } from "@material-ui/core/styles";
 import {
+    AppBar,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogTitle,
+    FormControl,
+    IconButton,
+    InputLabel,
     List,
     ListItem,
     ListItemText,
     ListItemIcon,
-    IconButton,
     ListItemSecondaryAction,
+    MenuItem,
+    RootRef,
+    Select,
+    Toolbar,
+    Typography,
+    Slide
 } from "@material-ui/core";
-
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import FormControl from '@material-ui/core/FormControl';
-
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import RootRef from "@material-ui/core/RootRef";
-import LocationOn from "@material-ui/icons/LocationOn";
-import DeleteOutline from "@material-ui/icons/Delete";
+import { LocationOn, DeleteOutline } from "@material-ui/icons";
+import CloseIcon from "@material-ui/icons/Close";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
     icon: {
-        marginRight: theme.spacing(2),
+        marginRight: theme.spacing(2)
     },
     appBar: {
-        position: 'relative',
+        position: "relative"
     },
     title: {
         marginLeft: theme.spacing(2),
-        flex: 1,
+        flex: 1
     },
     formControl: {
         margin: theme.spacing(1),
-        minWidth: 120,
-    },
+        minWidth: 120
+    }
 }));
 
 // a little function to help us with reordering the result
@@ -67,7 +64,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 });
 
 const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? 'lightgrey' : 'white',
+    background: isDraggingOver ? "lightgrey" : "white"
 });
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -77,14 +74,18 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function Tour_Item(props) {
     const classes = useStyles();
     const [tour_id, set_tour_id] = React.useState(props.data);
-    const [locations, setLocations] = React.useState(JSON.parse(props.location));
-    const [location_list, set_location_list] = React.useState(JSON.parse(props.location_list));
+    const [locations, setLocations] = React.useState(
+        JSON.parse(props.location)
+    );
+    const [location_list, set_location_list] = React.useState(
+        JSON.parse(props.location_list)
+    );
     const [open, setOpen] = React.useState(false);
     const [modalOpen, setModalOpen] = React.useState(false);
-    const [location_id, set_location_id] = React.useState('');
+    const [location_id, set_location_id] = React.useState("");
     const [total, setTotal] = React.useState(locations.length);
 
-    const handleChange = (event) => {
+    const handleChange = event => {
         for (const selected of location_list) {
             if (selected.id == event.target.value) {
                 for (const location of locations) {
@@ -114,7 +115,7 @@ function Tour_Item(props) {
         setOpen(false);
     };
 
-    const modalHandleOpen = (event) => {
+    const modalHandleOpen = event => {
         set_location_id(event.currentTarget.value);
         setModalOpen(true);
     };
@@ -127,7 +128,7 @@ function Tour_Item(props) {
         window.location.href = "/tour";
     };
 
-    const handleSave = (event) => {
+    const handleSave = event => {
         event.preventDefault();
         let min_time = 0;
         if (locations.length == 0) {
@@ -135,53 +136,61 @@ function Tour_Item(props) {
         }
         for (const location of locations) {
             min_time += location.min_time;
-            axios.post('/tourSubmitLocation', {
-                id: tour_id,
-                location_id: location.id,
-                location_order: location.order,
-            })
-                .then(function (response) {
+            axios
+                .post("/tourSubmitLocation", {
+                    id: tour_id,
+                    location_id: location.id,
+                    location_order: location.order
+                })
+                .then(function(response) {
                     console.log(response.data);
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.log(error);
                 });
         }
 
-        axios.post('/tourTimeUpdate', {
-            id: tour_id,
-            min_time: min_time,
-        })
-            .then(function (response) {
+        axios
+            .post("/tourTimeUpdate", {
+                id: tour_id,
+                min_time: min_time
+            })
+            .then(function(response) {
                 console.log(response.data);
                 handleCancel();
             })
-            .catch(function (error) {
+            .catch(function(error) {
                 console.log(error);
             });
-
     };
 
-    const handleDelete = (event) => {
+    const handleDelete = event => {
         event.preventDefault();
 
-        axios.post('/tourDeleteLocation', {
-            id: tour_id,
-            location_id: location_id,
-        })
-            .then(function (response) {
+        axios
+            .post("/tourDeleteLocation", {
+                id: tour_id,
+                location_id: location_id
+            })
+            .then(function(response) {
                 console.log(JSON.parse(response.config.data).location_id);
 
-                setLocations(locations.filter(location => location.id != JSON.parse(response.config.data).location_id));
+                setLocations(
+                    locations.filter(
+                        location =>
+                            location.id !=
+                            JSON.parse(response.config.data).location_id
+                    )
+                );
             })
-            .catch(function (error) {
+            .catch(function(error) {
                 console.log(error);
             });
 
         modalHandleClose();
     };
 
-    const onDragEnd = (result) => {
+    const onDragEnd = result => {
         if (!result.destination) {
             return;
         }
@@ -201,23 +210,33 @@ function Tour_Item(props) {
 
     const location_items = [];
     for (const location of location_list) {
-        location_items.push(<MenuItem value={location.id}>{location.name}</MenuItem>);
+        location_items.push(
+            <MenuItem value={location.id}>{location.name}</MenuItem>
+        );
     }
 
-    React.useEffect(() => {
-    }, [locations]);
+    React.useEffect(() => {}, [locations]);
 
     return (
         <React.Fragment>
             <AppBar className={classes.appBar}>
                 <Toolbar>
-                    <IconButton edge="start" color="inherit" onClick={handleCancel} aria-label="close">
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        onClick={handleCancel}
+                        aria-label="close"
+                    >
                         <CloseIcon />
                     </IconButton>
-                    <Typography variant="h6" className={classes.title}>Tour Detail</Typography>
+                    <Typography variant="h6" className={classes.title}>
+                        Tour Detail
+                    </Typography>
 
                     <FormControl className={classes.formControl}>
-                        <InputLabel id="demo-controlled-open-select-label">Locations</InputLabel>
+                        <InputLabel id="demo-controlled-open-select-label">
+                            Locations
+                        </InputLabel>
                         <Select
                             labelId="demo-controlled-open-select-label"
                             id="demo-controlled-open-select"
@@ -235,50 +254,70 @@ function Tour_Item(props) {
                     </FormControl>
                     <Button autoFocus color="inherit" onClick={handleSave}>
                         save
-                        </Button>
+                    </Button>
                 </Toolbar>
             </AppBar>
-            {locations.length === 0 ? <Typography variant="h6" className={classes.title}>No Locations</Typography> :
-            <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="droppable">
-                    {(provided, snapshot) => (
-                        <RootRef rootRef={provided.innerRef}>
-                            <List style={getListStyle(snapshot.isDraggingOver)}>
-                                {locations.map((location, index) => (
-                                    <Draggable key={location.id} draggableId={location.name} index={index}>
-                                        {(provided, snapshot) => (
-                                            <ListItem
-                                                ContainerComponent="li"
-                                                ContainerProps={{ ref: provided.innerRef }}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                                style={getItemStyle(
-                                                    snapshot.isDragging,
-                                                    provided.draggableProps.style
-                                                )}
-                                            >
-                                                <ListItemIcon>
-                                                    <LocationOn />
-                                                </ListItemIcon>
-                                                <ListItemText
-                                                    primary={location.name}
-                                                />
-                                                <ListItemSecondaryAction>
-                                                    <IconButton value={location.id} onClick={modalHandleOpen}>
-                                                        <DeleteOutline />
-                                                    </IconButton>
-                                                </ListItemSecondaryAction>
-                                            </ListItem>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {provided.placeholder}
-                            </List>
-                        </RootRef>
-                    )}
-                </Droppable>
-            </DragDropContext>
-            }
+            {locations.length === 0 ? (
+                <Typography variant="h6" className={classes.title}>
+                    No Locations
+                </Typography>
+            ) : (
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="droppable">
+                        {(provided, snapshot) => (
+                            <RootRef rootRef={provided.innerRef}>
+                                <List
+                                    style={getListStyle(
+                                        snapshot.isDraggingOver
+                                    )}
+                                >
+                                    {locations.map((location, index) => (
+                                        <Draggable
+                                            key={location.id}
+                                            draggableId={location.name}
+                                            index={index}
+                                        >
+                                            {(provided, snapshot) => (
+                                                <ListItem
+                                                    ContainerComponent="li"
+                                                    ContainerProps={{
+                                                        ref: provided.innerRef
+                                                    }}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
+                                                    style={getItemStyle(
+                                                        snapshot.isDragging,
+                                                        provided.draggableProps
+                                                            .style
+                                                    )}
+                                                >
+                                                    <ListItemIcon>
+                                                        <LocationOn />
+                                                    </ListItemIcon>
+                                                    <ListItemText
+                                                        primary={location.name}
+                                                    />
+                                                    <ListItemSecondaryAction>
+                                                        <IconButton
+                                                            value={location.id}
+                                                            onClick={
+                                                                modalHandleOpen
+                                                            }
+                                                        >
+                                                            <DeleteOutline />
+                                                        </IconButton>
+                                                    </ListItemSecondaryAction>
+                                                </ListItem>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                </List>
+                            </RootRef>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+            )}
             <Dialog
                 open={modalOpen}
                 TransitionComponent={Transition}
@@ -287,14 +326,16 @@ function Tour_Item(props) {
                 aria-labelledby="alert-dialog-slide-title"
                 aria-describedby="alert-dialog-slide-description"
             >
-                <DialogTitle id="alert-dialog-slide-title">{"Are you sure to delete the location?"}</DialogTitle>
+                <DialogTitle id="alert-dialog-slide-title">
+                    {"Are you sure to delete the location?"}
+                </DialogTitle>
                 <DialogActions>
                     <Button onClick={modalHandleClose} color="secondary">
                         Cancel
-                            </Button>
+                    </Button>
                     <Button onClick={handleDelete} color="primary">
                         Yes
-                            </Button>
+                    </Button>
                 </DialogActions>
             </Dialog>
         </React.Fragment>
@@ -303,9 +344,20 @@ function Tour_Item(props) {
 
 export default Tour_Item;
 
-if (document.getElementById('tour_item')) {
-    var data = document.getElementById('tour_item').getAttribute('tour_id');
-    var location = document.getElementById('tour_item').getAttribute('location');
-    var location_list = document.getElementById('tour_item').getAttribute('location_list');
-    ReactDOM.render(<Tour_Item data={data} location={location} location_list={location_list} />, document.getElementById('tour_item'));
+if (document.getElementById("tour_item")) {
+    var data = document.getElementById("tour_item").getAttribute("tour_id");
+    var location = document
+        .getElementById("tour_item")
+        .getAttribute("location");
+    var location_list = document
+        .getElementById("tour_item")
+        .getAttribute("location_list");
+    ReactDOM.render(
+        <Tour_Item
+            data={data}
+            location={location}
+            location_list={location_list}
+        />,
+        document.getElementById("tour_item")
+    );
 }

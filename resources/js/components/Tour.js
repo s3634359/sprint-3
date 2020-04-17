@@ -1,22 +1,26 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
-import Grid from "@material-ui/core/Grid";
 import { fade, makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
-import Slide from "@material-ui/core/Slide";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogTitle";
-import DialogContentText from "@material-ui/core/DialogTitle";
+
+import { 
+    Button, 
+    Card,
+    CardActions,
+    CardContent,
+    CardMedia,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Grid,
+    Slide,
+    TextField,
+    Typography,
+
+ } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
     icon: {
@@ -47,30 +51,6 @@ const useStyles = makeStyles(theme => ({
     title: {
         marginLeft: theme.spacing(2),
         flex: 1
-    },
-    search: {
-        position: "relative",
-        borderRadius: theme.shape.borderRadius,
-        backgroundColor: fade(theme.palette.common.white, 0.15),
-        "&:hover": {
-            backgroundColor: fade(theme.palette.common.white, 0.25)
-        },
-        marginRight: theme.spacing(2),
-        marginLeft: 0,
-        width: "100%",
-        [theme.breakpoints.up("sm")]: {
-            marginLeft: theme.spacing(3),
-            width: "auto"
-        }
-    },
-    searchIcon: {
-        padding: theme.spacing(0, 2),
-        height: "100%",
-        position: "absolute",
-        pointerEvents: "none",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center"
     },
     typeButton: {
         width: "30%",
@@ -110,6 +90,7 @@ function Tour(props) {
                 id: tour_id
             })
             .then(function(response) {
+                // update the tour list
                 setTours(tours.filter(tour => tour.id != tour_id));
             })
             .catch(function(error) {
@@ -134,6 +115,7 @@ function Tour(props) {
                 name: newTour
             })
             .then(function(response) {
+                // update the tour list
                 setTours([
                     ...tours,
                     {
@@ -205,7 +187,7 @@ function Tour(props) {
                                 <Card className={classes.card}>
                                     <CardMedia
                                         className={classes.cardMedia}
-                                        image="https://source.unsplash.com/random"
+                                        image="https://picsum.photos/200/300"
                                         title="Image title"
                                     />
                                     <CardContent

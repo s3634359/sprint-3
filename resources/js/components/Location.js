@@ -28,10 +28,6 @@ const useStyles = makeStyles(theme => ({
         flexDirection: "column",
         alignItems: "center"
     },
-    avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main
-    },
     form: {
         width: "100%", // Fix IE 11 issue.
         marginTop: theme.spacing(3)
@@ -130,7 +126,8 @@ function Location(props) {
             .catch(function(error) {
                 console.log(error);
             });
-
+        
+        // change buttons' state
         cancel();
     };
 
@@ -152,6 +149,7 @@ function Location(props) {
                 min_time: minTime
             })
             .then(function(response) {
+                // update the list
                 setLocations([
                     ...locations,
                     {
@@ -168,6 +166,7 @@ function Location(props) {
                 console.log(error);
             });
 
+        // change buttons' state
         cancel();
     };
 
@@ -192,6 +191,7 @@ function Location(props) {
                 console.log(error);
             });
 
+        // update the list
         var backup = locations;
         for (let location of backup) {
             if (location.id == id) {
@@ -203,6 +203,8 @@ function Location(props) {
             }
         }
         setLocations(backup);
+
+        // change buttons' state
         cancel();
     };
 
@@ -220,6 +222,7 @@ function Location(props) {
                 console.log(error);
             });
 
+        // update the list (could use setState and filter)
         var backup = locations;
         var number = 0;
         for (let location of backup) {
@@ -230,6 +233,7 @@ function Location(props) {
         }
         setLocations(backup);
 
+        // change buttons' state
         cancel();
     };
 
