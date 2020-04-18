@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-
 function Home(props) {
     const [users, setUsers] = React.useState(JSON.parse(props.data));
     const classes = useStyles();

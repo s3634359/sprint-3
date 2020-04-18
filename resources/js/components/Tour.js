@@ -1,10 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { fade, makeStyles } from "@material-ui/core/styles";
-
-import { 
-    Button, 
+import { makeStyles } from "@material-ui/core/styles";
+import {
+    Button,
     Card,
     CardActions,
     CardContent,
@@ -18,9 +17,8 @@ import {
     Grid,
     Slide,
     TextField,
-    Typography,
-
- } from "@material-ui/core";
+    Typography
+} from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
     icon: {
@@ -66,9 +64,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function Tour(props) {
     const [tours, setTours] = React.useState(JSON.parse(props.data));
     const [types, setTypes] = React.useState(JSON.parse(props.type));
-    const [locations, setLocations] = React.useState(
-        JSON.parse(props.location)
-    );
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const [newTour, setNewTour] = React.useState("");
@@ -125,7 +120,7 @@ function Tour(props) {
                     }
                 ]);
                 setLastId(lastId + 1);
-                console.log(lastId);
+                window.location.href = "/tour_item?id=" + (lastId + 1);
             })
             .catch(function(error) {
                 console.log(error);
@@ -310,9 +305,8 @@ export default Tour;
 if (document.getElementById("tour")) {
     var data = document.getElementById("tour").getAttribute("data");
     var type = document.getElementById("tour").getAttribute("type");
-    var location = document.getElementById("tour").getAttribute("location");
     ReactDOM.render(
-        <Tour data={data} type={type} location={location} />,
+        <Tour data={data} type={type} />,
         document.getElementById("tour")
     );
 }

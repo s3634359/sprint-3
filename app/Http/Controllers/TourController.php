@@ -25,8 +25,7 @@ class TourController extends Controller
     {
         $data = DB::select('select * from tours');
         $type = DB::select('select tour_id, type_id, types.name as name from tours_types, tours, types where tours.id = tours_types.tour_id and tours_types.type_id = types.id');
-        $location = DB::select('select * from locations, tours_locations where locations.id = tours_locations.location_id');
-        return view('tour')->with('data', json_encode($data))->with('type', json_encode($type))->with('location', json_encode($location));
+        return view('tour')->with('data', json_encode($data))->with('type', json_encode($type));
     }
 
     public function newTourSubmit(Request $request)
