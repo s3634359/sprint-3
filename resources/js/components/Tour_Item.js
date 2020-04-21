@@ -107,26 +107,18 @@ function Tour_Item(props) {
         }
     };
 
-    const handleOpen = () => {
-        setOpen(true);
-    };
+    const handleOpen = () => setOpen(true);
 
-    const handleClose = () => {
-        setOpen(false);
-    };
+    const handleClose = () => setOpen(false);
 
     const modalHandleOpen = event => {
         set_location_id(event.currentTarget.value);
         setModalOpen(true);
     };
 
-    const modalHandleClose = () => {
-        setModalOpen(false);
-    };
+    const modalHandleClose = () => setModalOpen(false);
 
-    const handleCancel = () => {
-        window.location.href = "/tour";
-    };
+    const handleCancel = () => (window.location.href = "/tour");
 
     const handleSave = event => {
         event.preventDefault();
