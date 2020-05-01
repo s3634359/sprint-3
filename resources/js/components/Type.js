@@ -61,10 +61,10 @@ function Type(props) {
                                                 id: oldData.id,
                                                 name: oldData.name
                                             })
-                                            .then(function(response) {
+                                            .then(function (response) {
                                                 console.log(response.data);
                                             })
-                                            .catch(function(error) {
+                                            .catch(function (error) {
                                                 console.log(error);
                                             });
 
@@ -88,10 +88,10 @@ function Type(props) {
                                                 id: oldData.id,
                                                 name: newData.name
                                             })
-                                            .then(function(response) {
+                                            .then(function (response) {
                                                 console.log(response.data);
                                             })
-                                            .catch(function(error) {
+                                            .catch(function (error) {
                                                 console.log(error);
                                             });
 
@@ -117,18 +117,16 @@ function Type(props) {
                                             .post("/typeSubmit", {
                                                 name: newData.name
                                             })
-                                            .then(function(response) {
-                                                console.log(response.data);
+                                            .then(function (response) {
+                                                setState(prevState => {
+                                                    const data = [...prevState.data];
+                                                    data.push(newData);
+                                                    return { ...prevState, data };
+                                                });
                                             })
-                                            .catch(function(error) {
+                                            .catch(function (error) {
                                                 console.log(error);
                                             });
-
-                                        setState(prevState => {
-                                            const data = [...prevState.data];
-                                            data.push(newData);
-                                            return { ...prevState, data };
-                                        });
                                     }, 600);
                                 })
                         }}

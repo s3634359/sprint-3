@@ -24,3 +24,42 @@ sum of the minimal times to spend at each location)</br>
 • edit the set of tour types – add new types, remove the types that are unnecessary, change the type label</br>
 • edit existing tours (add or remove locations, edit the tour name</br>
 • remove existing tours</br>
+
+## Setting up
+
+1. Git clone
+```
+$ git clone https://github.com/s3634359/humanoid
+$ cd humanoid
+```
+
+2. Install Backend Libraries
+```
+$ composer install
+```
+
+3. Install Frontend Libraries
+```
+$ npm install
+or
+$ yarn add
+```
+
+4. Create .env File
+- Copy .env.example file and name it .env
+- Enter your app key and database configurations
+
+5. Migrate
+```
+$ php artisan migrate
+```
+
+6. React 
+```
+$ npm run development
+```
+
+7. Serve
+```
+$ php artisan serve
+```
