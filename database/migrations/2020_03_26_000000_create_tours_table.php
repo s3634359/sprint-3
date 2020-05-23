@@ -17,6 +17,7 @@ class CreateToursTable extends Migration
             $table->increments('id')->index();
             $table->string('name');
             $table->integer('min_time');
+            $table->timestamps();
         });
     }
 

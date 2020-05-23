@@ -150,7 +150,6 @@ function Location(props) {
             })
             .then(function (response) {
                 // update the list
-                alert('hi');
                 setLocations([
                     ...locations,
                     {
@@ -188,6 +187,7 @@ function Location(props) {
             .then(function (response) {
                 // update the list
                 var backup = locations;
+                setLocations(locations.filter(location => location.id != id));
                 for (let location of backup) {
                     if (location.id == id) {
                         location.name = name;
@@ -205,6 +205,7 @@ function Location(props) {
 
 
 
+
         // change buttons' state
         cancel();
     };
@@ -218,15 +219,7 @@ function Location(props) {
             })
             .then(function (response) {
                 // update the list (could use setState and filter)
-                var backup = locations;
-                var number = 0;
-                for (let location of backup) {
-                    if (location.id == id) {
-                        backup.splice(number, 1);
-                    }
-                    number += 1;
-                }
-                setLocations(backup);
+                setLocations(locations.filter(location => location.id != id));
             })
             .catch(function (error) {
                 console.log(error);

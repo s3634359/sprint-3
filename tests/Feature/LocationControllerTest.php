@@ -33,7 +33,7 @@ class LocationControllerTest extends TestCase
     }
 
     /** @test */
-    public function an_admin_can_add_new_location()
+    public function an_admin_can_add_a_new_location()
     {
         $response = $this->actingAs(factory(User::class)->create());
                 
@@ -58,24 +58,40 @@ class LocationControllerTest extends TestCase
         $response = $this->actingAs(factory(User::class)->create());
         
         $location = factory(Location::class)->create();
-        $location_name = $location->name;
+        $location_id = $location->id;
 
         
         $this->assertCount(1, Location::all());
         
         $response = $this->post('/locationEdit', [
-            'name' => $location_name,
+            'id' => $location_id,
+            'name' => 'Test Location',
             'x_axis' => 13.52,
             'y_axis' => 15.52,
             'description' => 'Test Description',
             'min_time' => 60,
         ]);
 
-        // $selected_location = Location::firstOrFail()->where('name', $location_name)->get();
-        $x_axis = Location::where('name', $location_name)->pluck('x_axis')->first();
+        $x_axis = Location::find($location_id)->pluck('x_axis')->first();
         $this->assertCount(1, Location::all());
         $this->assertEquals(13.52, $x_axis);
-        // $this->assertEquals(13.52, $selected_location[0]->x_axis);
+    }
+
+    /** @test */
+    public function an_admin_can_delete_an_existing_location()
+    {
+        $response = $this->actingAs(factory(User::class)->create());
+        
+        $location = factory(Location::class)->create();
+        $location_id = $location->id;
+
+        $this->assertCount(1, Location::all());
+        
+        $response = $this->post('/locationRemove', [
+            'id' => $location_id,
+        ]);
+
+        $this->assertCount(0, Location::all());
     }
 
 }

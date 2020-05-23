@@ -129,7 +129,11 @@ function Tour(props) {
     };
 
     React.useEffect(() => {
-        setLastId(tours[tours.length - 1].id);
+        if (tours.length > 0) { 
+            setLastId(tours[tours.length - 1].id);
+        } else {
+            setLastId(-1);
+        }
     }, []);
 
     return (

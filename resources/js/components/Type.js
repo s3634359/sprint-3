@@ -20,7 +20,6 @@ function Type(props) {
     const list = [];
     for (const type of types) {
         list.push({ id: type.id, name: type.name });
-        console.log(type.name);
     }
 
     const [state, setState] = React.useState({
@@ -62,20 +61,20 @@ function Type(props) {
                                                 name: oldData.name
                                             })
                                             .then(function (response) {
-                                                console.log(response.data);
+                                                setState(prevState => {
+                                                    const data = [...prevState.data];
+                                                    data.splice(
+                                                        data.indexOf(oldData),
+                                                        1
+                                                    );
+                                                    return { ...prevState, data };
+                                                });
                                             })
                                             .catch(function (error) {
                                                 console.log(error);
                                             });
 
-                                        setState(prevState => {
-                                            const data = [...prevState.data];
-                                            data.splice(
-                                                data.indexOf(oldData),
-                                                1
-                                            );
-                                            return { ...prevState, data };
-                                        });
+                                        
                                     }, 600);
                                 }),
                             onRowUpdate: (newData, oldData) =>
@@ -89,30 +88,29 @@ function Type(props) {
                                                 name: newData.name
                                             })
                                             .then(function (response) {
-                                                console.log(response.data);
+                                                if (oldData) {
+                                                    setState(prevState => {
+                                                        const data = [
+                                                            ...prevState.data
+                                                        ];
+                                                        data[
+                                                            data.indexOf(oldData)
+                                                        ] = newData;
+                                                        return { ...prevState, data };
+                                                    });
+                                                }
                                             })
                                             .catch(function (error) {
                                                 console.log(error);
                                             });
 
-                                        if (oldData) {
-                                            setState(prevState => {
-                                                const data = [
-                                                    ...prevState.data
-                                                ];
-                                                data[
-                                                    data.indexOf(oldData)
-                                                ] = newData;
-                                                return { ...prevState, data };
-                                            });
-                                        }
+                                        
                                     }, 600);
                                 }),
                             onRowAdd: newData =>
                                 new Promise(resolve => {
                                     setTimeout(() => {
                                         resolve();
-
                                         axios
                                             .post("/typeSubmit", {
                                                 name: newData.name

@@ -76,14 +76,13 @@ class LocationController extends Controller
             'description' => $request['description'], 
             'min_time' => $request['min_time']
             ]);
-        // DB::insert('insert into locations values (NULL, ?, ?, ?, ?, ?, NOW(), NULL)', [$request['name'], $request['x_axis'], $request['y_axis'], $request['description'], $request['min_time']]);
-
-        return response()->json([$request->all()]);
+        
+            return response()->json([$request->all()]);
     }
 
     public function locationEdit(Request $request)
     {   
-        $location = Location::where('name', $request['name'])->first();
+        $location = Location::find($request['id']);
         $location->name = $request['name'];
         $location->x_axis = $request['x_axis'];
         $location->y_axis = $request['y_axis'];
@@ -91,19 +90,13 @@ class LocationController extends Controller
         $location->min_time = $request['min_time'];
         $location->save();
         
-        // DB::table('locations')
-        //     ->where('id', $request['id'])
-        //     ->update(['name' => $request['name'], 'x_axis' => $request['x_axis'], 'y_axis' => $request['y_axis'], 'description' => $request['description'], 'min_time' => $request['min_time'], 'updated_at' => now()]);
         return response()->json([$request->all()]);
     }
 
     public function locationRemove(Request $request)
     {
-        $location = Location::destroy($request['id']);
+        Location::destroy($request['id']);
         
-        // DB::table('locations')
-        //     ->where('id', $request['id'])
-        //     ->delete();
         return response()->json([$request->all()]);
     }
     

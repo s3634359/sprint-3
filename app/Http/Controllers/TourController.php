@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Tour;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -16,6 +19,36 @@ class TourController extends Controller
     {
         $this->middleware('auth');
     }
+
+    /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'name' => ['required', 'string', 'max:255'],
+            'min_time' => ['required', 'int']
+        ]);
+    }
+
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param  array  $data
+     * @return \App\Tour
+     */
+    protected function create(array $data)
+    {
+        return Tour::create([
+            'name' => $data['name'],
+            'min_time' => 0
+        ]);
+       
+    }
+
     /**
     * success response method.
     *
@@ -30,13 +63,17 @@ class TourController extends Controller
 
     public function newTourSubmit(Request $request)
     {
-        DB::insert('insert into tours values (NULL, ?, 0)', [$request['name']]);
+        $tour = Tour::create([
+            'name' => $request['name'],
+            'min_time' => 0
+        ]);
+
         return response()->json([$request->all()]);
     }
 
     public function deleteTour(Request $request)
     {
-        DB::delete('delete from tours where id = ?', [$request['id']]);
+        Tour::destroy($request['id']);
         return response()->json([$request->all()]);
     }
 
