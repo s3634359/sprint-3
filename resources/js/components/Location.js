@@ -109,7 +109,7 @@ function Location(props) {
                 description: description,
                 min_time: minTime
             })
-            .then(function(response) {
+            .then(function (response) {
                 //List update
                 setLocations([
                     ...locations,
@@ -123,10 +123,10 @@ function Location(props) {
                     }
                 ]);
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.log(error);
             });
-        
+
         // change buttons' state
         cancel();
     };
@@ -148,8 +148,9 @@ function Location(props) {
                 description: description,
                 min_time: minTime
             })
-            .then(function(response) {
+            .then(function (response) {
                 // update the list
+                alert('hi');
                 setLocations([
                     ...locations,
                     {
@@ -162,7 +163,7 @@ function Location(props) {
                     }
                 ]);
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.log(error);
             });
 
@@ -184,25 +185,25 @@ function Location(props) {
                 description: description,
                 min_time: minTime
             })
-            .then(function(response) {
-                console.log(response.data);
+            .then(function (response) {
+                // update the list
+                var backup = locations;
+                for (let location of backup) {
+                    if (location.id == id) {
+                        location.name = name;
+                        location.x_axis = x_axis;
+                        location.y_axis = y_axis;
+                        location.description = description;
+                        location.min_time = minTime;
+                    }
+                }
+                setLocations(backup);
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.log(error);
             });
 
-        // update the list
-        var backup = locations;
-        for (let location of backup) {
-            if (location.id == id) {
-                location.name = name;
-                location.x_axis = x_axis;
-                location.y_axis = y_axis;
-                location.description = description;
-                location.min_time = minTime;
-            }
-        }
-        setLocations(backup);
+
 
         // change buttons' state
         cancel();
@@ -213,25 +214,25 @@ function Location(props) {
 
         axios
             .post("/locationRemove", {
-                id: id
+                id: id,
             })
-            .then(function(response) {
-                console.log(response.data);
+            .then(function (response) {
+                // update the list (could use setState and filter)
+                var backup = locations;
+                var number = 0;
+                for (let location of backup) {
+                    if (location.id == id) {
+                        backup.splice(number, 1);
+                    }
+                    number += 1;
+                }
+                setLocations(backup);
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.log(error);
             });
 
-        // update the list (could use setState and filter)
-        var backup = locations;
-        var number = 0;
-        for (let location of backup) {
-            if (location.id == id) {
-                backup.splice(number, 1);
-            }
-            number += 1;
-        }
-        setLocations(backup);
+
 
         // change buttons' state
         cancel();
