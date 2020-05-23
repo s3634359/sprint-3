@@ -65,4 +65,37 @@ class TourControllerTest extends TestCase
         $this->assertCount(0, Tour::all());
     }
 
+    /** @test */
+    public function an_assistant_can_not_add_a_new_tour()
+    {
+        $response = $this->actingAs(factory(User::class)->create([
+            'position' => 'assistant'
+        ]));                
+        $this->assertCount(0, Tour::all());
+        
+        $response = $this->post('/newTourSubmit', [
+            'name' => 'Test Tour',
+        ]);
+
+        $this->assertCount(0, Tour::all());
+    }
+
+    /** @test */
+    public function an_assistant_can_not_delete_an_existing_tour()
+    {
+        $response = $this->actingAs(factory(User::class)->create([
+            'position' => 'assistant'
+        ]));        
+        $tour = factory(Tour::class)->create();
+        $tour_id = $tour->id;
+
+        $this->assertCount(1, Tour::all());
+        
+        $response = $this->post('/deleteTour', [
+            'id' => $tour_id,
+        ]);
+
+        $this->assertCount(1, Tour::all());
+    }
+
 }
