@@ -81,7 +81,6 @@ function Type(props) {
                                 new Promise(resolve => {
                                     setTimeout(() => {
                                         resolve();
-
                                         axios
                                             .post("/typeEdit", {
                                                 id: oldData.id,

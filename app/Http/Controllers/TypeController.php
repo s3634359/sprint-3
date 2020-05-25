@@ -78,6 +78,7 @@ class TypeController extends Controller
     public function typeRemove(Request $request)
     {
         Type::destroy($request['id']);
+        
         return response()->json([$request->all()]);
     }
 
