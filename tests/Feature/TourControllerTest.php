@@ -33,6 +33,18 @@ class TourControllerTest extends TestCase
     }
 
     /** @test */
+    public function only_logged_in_users_can_see_the_tour_location_page()
+    {
+        $response = $this->get('/tour_item')->assertRedirect('/login');
+    }
+
+    /** @test */
+    public function only_logged_in_users_can_see_the_tour_type_page()
+    {
+        $response = $this->get('/tour_type')->assertRedirect('/login');
+    }
+
+    /** @test */
     public function an_admin_can_add_a_new_tour()
     {
         $response = $this->actingAs(factory(User::class)->create());
