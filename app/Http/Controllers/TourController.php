@@ -84,12 +84,6 @@ class TourController extends Controller
         return view('tour_item')->with('location', json_encode($location))->with('location_list', json_encode($location_list));
     }
 
-    public function tourSubmit(Request $request)
-    {
-        DB::insert('insert into locations values (NULL, ?, ?, ?, ?, ?, NOW(), NULL)', [$request['name'], $request['x_axis'], $request['y_axis'], $request['description'], $request['min_time']]);
-        return response()->json([$request->all()]);
-    }
-
     public function tourTimeUpdate(Request $request)
     {
         

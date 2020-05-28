@@ -84,5 +84,22 @@ class TypeControllerTest extends TestCase
 
         $this->assertCount(0, Type::all());
     }
+    
+    /** @test */
+    public function an_assistant_can_not_add_a_new_type()
+    {
+        $response = $this->actingAs(factory(User::class)->create([
+            'position' => 'assistant'
+        ]));       
 
+        $this->assertCount(0, Type::all());
+
+        factory(Type::class)->create();
+        
+        $response = $this->post('/typeSubmit', [
+            'name' => 'Test Type',
+        ]);
+
+        $this->assertCount(1, Type::all());
+    }
 }
