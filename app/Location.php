@@ -17,5 +17,4 @@ class Location extends Model
     protected $fillable = [
         'name', 'x_axis', 'y_axis', 'description', 'min_time',
     ];
-
 }

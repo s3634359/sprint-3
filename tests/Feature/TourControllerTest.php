@@ -4,6 +4,10 @@ namespace Tests\Feature;
 
 use App\User;
 use App\Tour;
+use App\Location;
+use App\Type;
+use App\ToursLocations;
+use App\ToursTypes;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -108,6 +112,116 @@ class TourControllerTest extends TestCase
         ]);
 
         $this->assertCount(1, Tour::all());
+    }
+
+    /** @test */
+    public function add_locations_to_existing_tours()
+    {
+        $tour = factory(Tour::class)->create([
+            'id' => 1,
+        ]);  
+        $location = factory(Location::class)->create([
+            'id' => 1,
+        ]); 
+        $tours_locations = factory(ToursLocations::class)->create([
+            'order' => 1,
+            'tour_id' => 1,
+            'location_id' => 1,
+        ]);  
+        $this->assertCount(1, ToursLocations::all());
+    }
+
+
+    /** @test */
+    public function add_types_to_existing_tours()
+    {
+        $tour = factory(Tour::class)->create([
+            'id' => 1,
+        ]);  
+        $type = factory(Type::class)->create([
+            'id' => 1,
+        ]); 
+        $tours_types = factory(ToursTypes::class)->create([
+            'tour_id' => 1,
+            'type_id' => 1,
+        ]);  
+        $this->assertCount(1, ToursTypes::all());
+    }
+
+    /** @test */
+    public function delete_locations_from_existing_tours()
+    {
+        $tour = factory(Tour::class)->create([
+            'id' => 1,
+        ]);  
+        $location = factory(Location::class)->create([
+            'id' => 1,
+        ]); 
+        $tours_locations = factory(ToursLocations::class)->create([
+            'order' => 1,
+            'tour_id' => 1,
+            'location_id' => 1,
+        ]);  
+        $this->assertCount(1, ToursLocations::all());
+
+        ToursLocations::where('id',$tours_locations->id)->delete();
+
+        $this->assertCount(0, ToursLocations::all());
+    }
+
+    /** @test */
+    public function delete_types_from_existing_tours()
+    {
+        $tour = factory(Tour::class)->create([
+            'id' => 1,
+        ]);  
+        $type = factory(Type::class)->create([
+            'id' => 1,
+        ]); 
+        $tours_types = factory(ToursTypes::class)->create([
+            'tour_id' => 1,
+            'type_id' => 1,
+        ]);  
+        $this->assertCount(1, ToursTypes::all());
+
+        ToursTypes::where('id',$tours_types->id)->delete();
+
+        $this->assertCount(0, ToursTypes::all());
+    }
+
+    /** @test */
+    public function change_the_order_of_locations_for_existing_tours()
+    {
+        $tour = factory(Tour::class)->create([
+            'id' => 1,
+        ]);  
+        $location_1 = factory(Location::class)->create([
+            'id' => 1,
+        ]); 
+        $location_2 = factory(Location::class)->create([
+            'id' => 2,
+        ]); 
+
+        $tours_locations_1 = factory(ToursLocations::class)->create([
+            'order' => 1,
+            'tour_id' => 1,
+            'location_id' => 1,
+        ]);  
+
+        $tours_locations_2 = factory(ToursLocations::class)->create([
+            'order' => 2,
+            'tour_id' => 1,
+            'location_id' => 2,
+        ]);  
+
+        $this->assertEquals(1, $tours_locations_1->order);
+        $this->assertEquals(2, $tours_locations_2->order);
+
+        $tours_locations_1->order = 2;
+        $tours_locations_2->order = 1;
+
+        $this->assertEquals(2, $tours_locations_1->order);
+        $this->assertEquals(1, $tours_locations_2->order);
     }
 
 }
