@@ -17,12 +17,12 @@ class ToursLocations extends Model
 
     public function locations()
     {
-        return $this->hasMany('App\Location');
+        return $this->hasMany('App\Location', 'locations_id');
     }
 
     public function tours()
     {
-        return $this->hasMany('App\Tour');
+        return $this->hasMany('App\Tour', 'tour_id');
     }
 
 }
